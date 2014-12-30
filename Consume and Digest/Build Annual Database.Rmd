@@ -12,7 +12,7 @@ output:
 #### Purpose
 Extract typical weekday flows and speeds from the Caltrans Performance Monitoring database (PeMS).  To access the raw data, start here:
 1. http://pems.dot.ca.gov/
-2. Login (free login available)
+2. Login (data is free with sign-up)
 3. Navigate to Tools --> Data Clearinghouse (http://pems.dot.ca.gov/?dnode=Clearinghouse)
 4. Drop down `Station Hour`, drop down `District 4`
 5. Select the `.gz` files for March, April, May, September, October, and November (typical months)
@@ -21,16 +21,13 @@ Extract typical weekday flows and speeds from the Caltrans Performance Monitorin
 
 This script summarize hourly and time period specific typical weekday traffic characteristics. 
 
-This script builds `Rdata` annual databases.  See `Build Database.Rmd` for the consolidation of these database into two databases that span years. 
+This script builds `Rdata` annual databases.  See `Run Build Annual for All Years.R` for a controller script that runs this script repeatedly in batch mode. See `Build Database.Rmd` for the consolidation of these database into two databases that span years. 
 
 #### _ISSUES_
 1. 
 
 #### _TODO_
-1.  Add the number of days for which the average is taken
-2.  churn: run for each year
-
-
+1. 
 
 ## Overhead
 
@@ -48,8 +45,9 @@ knitr::opts_chunk$set(cache=TRUE)
 ```
 
 #### Remote file names
+##### Set year string in `Run Build Annual for All Years.R`
 ```{r file-names}
-YEAR_STRING = "2014"
+# YEAR_STRING = "2010"
 
 F_DATA_MAR = paste("M:/Data/Traffic/PeMS/",YEAR_STRING,"/d04_text_station_hour_",YEAR_STRING,"_03.txt", sep = "")
 F_DATA_APR = paste("M:/Data/Traffic/PeMS/",YEAR_STRING,"/d04_text_station_hour_",YEAR_STRING,"_04.txt", sep = "")
@@ -73,15 +71,25 @@ MIN_PCT_OBS = 100
 # Default speed for locations with zero flow
 DEFAULT_SPEED = 65.0
 
+# Maximum flow for which a zero flow could be plausibly observed
+MAX_FLOW_ZERO_PLAUSIBLE = 150.0
+
+# Minimum number of days observed for estimates to be retained
+MIN_DAYS_OBSERVED = 15
+
 # Data frame of time periods
 hour        = c(  0,    1,    2,    3,    4,    5,    6,    7,    8,    9,    
                  10,   11,   12,   13,   14,   15,   16,   17,   18,   19,   
-                 20,   21,   22,    23)
+                 20,   21,   22,   23)
 time_period = c("EV", "EV", "EV", "EA", "EA", "EA", "AM", "AM", "AM", "AM", 
                 "MD", "MD", "MD", "MD", "MD", "PM", "PM", "PM", "PM", "EV", 
                 "EV", "EV", "EV", "EV")
 
 time_per_df = data.frame(hour, time_period)
+
+# Use the time period frame to get the number of hours in each time period
+time_per_df_counts = as.data.frame(table(time_per_df$time_period))
+time_per_df_counts <- select(time_per_df_counts, time_period = Var1, time_period_count = Freq)
 
 ```
 
@@ -192,7 +200,7 @@ data_clean <- rbind(data_mar_clean, data_apr_clean, data_may_clean, data_sep_cle
 
 ## Data Summaries
 ```{r summaries}
-# Join with time_periods
+# Join with time_periods and time_period_counts
 data_clean <- left_join(data_clean, time_per_df, by = c("hour"))
 
 # First summaries by hour
@@ -204,10 +212,10 @@ data_sum_hour <- data_clean %>%
 
 # Use averages to locate suspect data 
 suspect_stations_df <- data_sum_hour %>%
-  mutate(suspect_station = ifelse(max_flow > 250 & min_flow == 0L, TRUE, FALSE)) %>%
-  select(station, hour, district, route, type, direction, suspect_station)
+  mutate(suspect_station = ifelse(max_flow > MAX_FLOW_ZERO_PLAUSIBLE & min_flow == 0L, TRUE, FALSE)) %>%
+  select(station, district, route, direction, type, hour, lanes, suspect_station)
 
-data_clean_suspect <- left_join(data_clean, suspect_stations_df, by = c("station", "hour", "district", "route", "type", "direction"))
+data_clean_suspect <- left_join(data_clean, suspect_stations_df, by = c("station", "district", "route", "direction", "type", "hour", "lanes"))
 data_clean_suspect <- data_clean_suspect %>%
   filter(!(suspect_station & flow < 1))
 
@@ -216,20 +224,29 @@ data_sum_hour <- data_clean_suspect %>%
   group_by(station, district, route, direction, type, hour, lanes) %>%
   summarise(median_flow  = median(flow),      avg_flow  = mean(flow),      sd_flow      = sd(flow), 
             median_speed = median(speed),     avg_speed = mean(speed),     sd_speed     = sd(speed),
-            median_occup = median(occupancy), avg_occup = mean(occupancy), sd_occupancy = sd(occupancy))
+            median_occup = median(occupancy), avg_occup = mean(occupancy), sd_occupancy = sd(occupancy),
+            days_observed = n()) %>%
+  filter(days_observed > MIN_DAYS_OBSERVED)
 
 # Summaries by time-period 
 data_sum_period <- data_clean_suspect %>%
   mutate(speed_flow = speed * flow) %>%
   mutate(occup_flow = occupancy * flow) %>%
   group_by(date, station, district, route, direction, type, time_period, lanes) %>%
-  summarise(flow = sum(flow), speed_flow = sum(speed_flow), occup_flow = sum(occup_flow)) %>%
+  summarise(flow = sum(flow), speed_flow = sum(speed_flow), occup_flow = sum(occup_flow), hours_observed = n())
+
+data_sum_period <- left_join(data_sum_period, time_per_df_counts, by = c("time_period"))
+
+data_sum_period <- data_sum_period %>%
+  filter(hours_observed == time_period_count) %>%
   mutate(speed = ifelse(flow > 0, speed_flow / flow, DEFAULT_SPEED)) %>%
   mutate(occupancy = ifelse(flow > 0, occup_flow / flow, 0.0)) %>%
   group_by(station, district, route, direction, type, time_period, lanes) %>%
   summarise(median_flow  = median(flow),      avg_flow  = mean(flow),      sd_flow      = sd(flow), 
             median_speed = median(speed),     avg_speed = mean(speed),     sd_speed     = sd(speed),
-            median_occup = median(occupancy), avg_occup = mean(occupancy), sd_occupancy = sd(occupancy))
+            median_occup = median(occupancy), avg_occup = mean(occupancy), sd_occupancy = sd(occupancy),
+            days_observed = n()) %>%
+  filter(days_observed > MIN_DAYS_OBSERVED)
 
 ```
 
