@@ -1,42 +1,21 @@
----
-title: "Build Database"
-author: "David Ory"
-output:
-  html_document:
-    theme: cosmo
-    toc: yes
----
-
+# Build Database
+#
 ## Administration
-
-#### Purpose
-`Build Annual Database.Rmd` creates two year-specific databases of typical weekday PeMS traffic data.  One database has hourly summaries and the other has time-period summaries.  This script combines these databases across years and writes out a two consolidated databases in `Rdata` and `CSV` format. 
-
-#### _ISSUES_
-1. 
-
-#### _TODO_
-2.  Bring in GIS lats/longs for off-sets  -- are these better?
-3.  Put in tableau --> push
-4.  Update Wiki references
-5.  Take down ArcGIS on-line
-6.  Take down GeoCommons
+# 
+### Purpose
+# `Build Annual Database.Rmd` creates two year-specific databases of typical weekday PeMS traffic data.  One database has hourly summaries and the other has time-period summaries.  This script combines these databases across years and writes out a two consolidated databases in `Rdata` and `CSV` format. 
+# 
+### _ISSUES_
+# 1. 
+# 
+### _TODO_
+# 7.  Put hourly in SQL server --> tableau
 
 
 ## Overhead
 
-#### Libraries
-```{r overhead}
-library(knitr)
-```
+### Remote file names
 
-#### Knitr config
-```{r config, include=FALSE}
-knitr::opts_chunk$set(cache=TRUE)
-```
-
-#### Remote file names
-```{r file-names}
 # Year 2005 data
 YEAR = 2005
 F_2005_HOUR_R   = paste("M:/Data/Traffic/PeMS/",YEAR,"/pems_hour_",YEAR,".Rdata", sep = "")
@@ -88,15 +67,14 @@ F_2014_HOUR_R   = paste("M:/Data/Traffic/PeMS/",YEAR,"/pems_hour_",YEAR,".Rdata"
 F_2014_PERIOD_R = paste("M:/Data/Traffic/PeMS/",YEAR,"/pems_period_",YEAR,".Rdata", sep = "")
 
 # Ouput 
-F_OUTPUT_HOUR_R   = "M:/Data/Traffic/PeMS/pems_hour.Rdata"
-F_OUTPUT_HOUR_CSV = "M:/Data/Traffic/PeMS/pems_hour.csv"
+F_OUTPUT_HOUR_R   = "D:/files/My Box Files/Share Data/pems-typical-weekday/pems_hour.Rdata"
+F_OUTPUT_HOUR_CSV = "D:/files/My Box Files/Share Data/pems-typical-weekday/pems_hour.csv"
 
-F_OUTPUT_PERIOD_R   = "M:/Data/Traffic/PeMS/pems_period.Rdata"
-F_OUTPUT_PERIOD_CSV = "M:/Data/Traffic/PeMS/pems_period.csv"
-```
+F_OUTPUT_PERIOD_R   = "D:/files/My Box Files/Share Data/pems-typical-weekday/pems_period.Rdata"
+F_OUTPUT_PERIOD_CSV = "D:/files/My Box Files/Share Data/pems-typical-weekday/pems_period.csv"
 
 ## Bind and Write
-```{r merge-write}
+
 # Hour data
 load(F_2005_HOUR_R)
 hour_2005 <- data_sum_hour_write
@@ -168,7 +146,5 @@ period_all <- rbind(period_2005, period_2006, period_2007, period_2008, period_2
 
 save(period_all, file = F_OUTPUT_PERIOD_R)
 write.csv(period_all, file = F_OUTPUT_PERIOD_CSV, row.names = FALSE, quote = T)
-
-```
 
 

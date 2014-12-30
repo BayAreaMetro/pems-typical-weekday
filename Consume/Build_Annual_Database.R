@@ -1,54 +1,40 @@
----
-title: "Build Annual Database"
-author: "David Ory"
-output:
-  html_document:
-    theme: cosmo
-    toc: yes
----
-
+# Build Annual Database
+#
 ## Administration
+#
+### Purpose
+# Extract typical weekday flows and speeds from the Caltrans Performance Monitoring database (PeMS).  To access the raw data, start here:
+# 1. http://pems.dot.ca.gov/
+# 2. Login (data is free with sign-up)
+# 3. Navigate to Tools --> Data Clearinghouse (http://pems.dot.ca.gov/?dnode=Clearinghouse)
+# 4. Drop down `Station Hour`, drop down `District 4`
+# 5. Select the `.gz` files for March, April, May, September, October, and November (typical months)
+# 6. Drop down `Station Metadata`
+# 7. Select the `.txt`  files for the typical months
+#
+# This script summarize hourly and time period specific typical weekday traffic characteristics. 
+#
+# This script builds `Rdata` annual databases.  See `Run Build Annual for All Years.R` for a controller script that runs this script repeatedly in batch mode. See `Build Database.Rmd` for the consolidation of these database into two databases that span years. 
 
-#### Purpose
-Extract typical weekday flows and speeds from the Caltrans Performance Monitoring database (PeMS).  To access the raw data, start here:
-1. http://pems.dot.ca.gov/
-2. Login (data is free with sign-up)
-3. Navigate to Tools --> Data Clearinghouse (http://pems.dot.ca.gov/?dnode=Clearinghouse)
-4. Drop down `Station Hour`, drop down `District 4`
-5. Select the `.gz` files for March, April, May, September, October, and November (typical months)
-6. Drop down `Station Metadata`
-7. Select the `.txt`  files for the typical months
+### _ISSUES_
+# 1. 
 
-This script summarize hourly and time period specific typical weekday traffic characteristics. 
-
-This script builds `Rdata` annual databases.  See `Run Build Annual for All Years.R` for a controller script that runs this script repeatedly in batch mode. See `Build Database.Rmd` for the consolidation of these database into two databases that span years. 
-
-#### _ISSUES_
-1. 
-
-#### _TODO_
-1. 
+### _TODO_
+# 1. 
 
 ## Overhead
 
-#### Libraries
-```{r overhead}
-library(knitr)
+### Libraries
 library(reshape2)
 suppressMessages(library(dplyr))
 library(stringr)
-```
 
-#### Knitr config
-```{r config, include=FALSE}
-knitr::opts_chunk$set(cache=TRUE)
-```
+### Command-line argument
+args <- commandArgs(trailingOnly = TRUE)
+YEAR_STRING = args[1]
 
-#### Remote file names
-##### Set year string in `Run Build Annual for All Years.R`
-```{r file-names}
+### Remote file names
 # YEAR_STRING = "2010"
-
 F_DATA_MAR = paste("M:/Data/Traffic/PeMS/",YEAR_STRING,"/d04_text_station_hour_",YEAR_STRING,"_03.txt", sep = "")
 F_DATA_APR = paste("M:/Data/Traffic/PeMS/",YEAR_STRING,"/d04_text_station_hour_",YEAR_STRING,"_04.txt", sep = "")
 F_DATA_MAY = paste("M:/Data/Traffic/PeMS/",YEAR_STRING,"/d04_text_station_hour_",YEAR_STRING,"_05.txt", sep = "")
@@ -61,10 +47,10 @@ F_META  = paste("M:/Data/Traffic/PeMS/",YEAR_STRING,"/d04_text_meta_",YEAR_STRIN
 
 F_OUTPUT_HOUR_R   = paste("M:/Data/Traffic/PeMS/",YEAR_STRING,"/pems_hour_",YEAR_STRING,".Rdata", sep = "")
 F_OUTPUT_PERIOD_R = paste("M:/Data/Traffic/PeMS/",YEAR_STRING,"/pems_period_",YEAR_STRING,".Rdata", sep = "")
-```
 
-#### Parameters
-```{r parameters}
+
+### Parameters
+
 # Share of sensor data that must be observed to be included
 MIN_PCT_OBS = 100
 
@@ -79,8 +65,8 @@ MIN_DAYS_OBSERVED = 15
 
 # Data frame of time periods
 hour        = c(  0,    1,    2,    3,    4,    5,    6,    7,    8,    9,    
-                 10,   11,   12,   13,   14,   15,   16,   17,   18,   19,   
-                 20,   21,   22,   23)
+                  10,   11,   12,   13,   14,   15,   16,   17,   18,   19,   
+                  20,   21,   22,   23)
 time_period = c("EV", "EV", "EV", "EA", "EA", "EA", "AM", "AM", "AM", "AM", 
                 "MD", "MD", "MD", "MD", "MD", "PM", "PM", "PM", "PM", "EV", 
                 "EV", "EV", "EV", "EV")
@@ -91,13 +77,11 @@ time_per_df = data.frame(hour, time_period)
 time_per_df_counts = as.data.frame(table(time_per_df$time_period))
 time_per_df_counts <- select(time_per_df_counts, time_period = Var1, time_period_count = Freq)
 
-```
+
 
 ## Methods 
 
 ### Extract clean data from raw data
-```{r data-clean}
-
 Clean_Raw <- function(input_df){
   
   # give the variables standard names
@@ -164,14 +148,11 @@ Clean_Raw <- function(input_df){
   
   return(data.clean)
   
-  }
+}
 
-
-```
 
 
 ## Data reads
-```{r data-reads}
 data_mar <- read.csv(F_DATA_MAR, header = FALSE)
 data_apr <- read.csv(F_DATA_APR, header = FALSE)
 data_may <- read.csv(F_DATA_MAY, header = FALSE)
@@ -182,11 +163,9 @@ data_nov <- read.csv(F_DATA_NOV, header = FALSE)
 
 data_meta <- read.csv(F_META, header = TRUE, sep = "\t")
 
-```
 
 
 ## Build Database
-```{r build-database}
 data_mar_clean <- Clean_Raw(data_mar)
 data_apr_clean <- Clean_Raw(data_apr)
 data_may_clean <- Clean_Raw(data_may)
@@ -196,10 +175,10 @@ data_oct_clean <- Clean_Raw(data_oct)
 data_nov_clean <- Clean_Raw(data_nov)
 
 data_clean <- rbind(data_mar_clean, data_apr_clean, data_may_clean, data_sep_clean, data_oct_clean, data_nov_clean)
-```
+
 
 ## Data Summaries
-```{r summaries}
+
 # Join with time_periods and time_period_counts
 data_clean <- left_join(data_clean, time_per_df, by = c("hour"))
 
@@ -210,7 +189,7 @@ data_sum_hour <- data_clean %>%
             median_speed = median(speed),     avg_speed = mean(speed),     sd_speed     = sd(speed),
             median_occup = median(occupancy), avg_occup = mean(occupancy), sd_occupancy = sd(occupancy))
 
-# Use averages to locate suspect data 
+# Use max and min to locate suspect data 
 suspect_stations_df <- data_sum_hour %>%
   mutate(suspect_station = ifelse(max_flow > MAX_FLOW_ZERO_PLAUSIBLE & min_flow == 0L, TRUE, FALSE)) %>%
   select(station, district, route, direction, type, hour, lanes, suspect_station)
@@ -248,10 +227,10 @@ data_sum_period <- data_sum_period %>%
             days_observed = n()) %>%
   filter(days_observed > MIN_DAYS_OBSERVED)
 
-```
+
 
 ## Write to disk
-```{r write-disk}
+
 # Join the meta-data
 data_meta <- data_meta %>%
   select(station = ID, state_pm = State_PM, abs_pm = Abs_PM, latitude = Latitude, longitude = Longitude)
@@ -268,5 +247,4 @@ data_sum_period_write <- data_sum_period_write %>%
 save(data_sum_hour_write, file = F_OUTPUT_HOUR_R)
 save(data_sum_period_write, file = F_OUTPUT_PERIOD_R)
 
-```
 
