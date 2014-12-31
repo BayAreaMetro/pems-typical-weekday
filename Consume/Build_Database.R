@@ -109,7 +109,7 @@ hour_2014 <- data_sum_hour_write
 hour_all <- rbind(hour_2005, hour_2006, hour_2007, hour_2008, hour_2009, hour_2010, hour_2012, hour_2013, hour_2014)
 
 save(hour_all, file = F_OUTPUT_HOUR_R)
-write.csv(hour_all, file = F_OUTPUT_HOUR_CSV, row.names = FALSE, quote = T)
+write.csv(hour_all, file = F_OUTPUT_HOUR_CSV, row.names = FALSE, quote = F) # SQL server does not like quotes
 
 # Period data
 load(F_2005_PERIOD_R)
@@ -145,6 +145,5 @@ period_2014 <- data_sum_period_write
 period_all <- rbind(period_2005, period_2006, period_2007, period_2008, period_2009, period_2010, period_2011, period_2012, period_2013, period_2014)
 
 save(period_all, file = F_OUTPUT_PERIOD_R)
-write.csv(period_all, file = F_OUTPUT_PERIOD_CSV, row.names = FALSE, quote = T)
-
+write.csv(period_all, file = F_OUTPUT_PERIOD_CSV, row.names = FALSE, quote = T) # Tableau is okay with quotes
 
