@@ -16,18 +16,14 @@
 #
 # This script builds `Rdata` annual databases.  See `Run Build Annual for All Years.R` for a controller script that runs this script repeatedly in batch mode. See `Build Database.Rmd` for the consolidation of these database into two databases that span years. 
 
-### _ISSUES_
-# 1. 
-
-### _TODO_
-# 1. 
-
 ## Overhead
 
 ### Libraries
 library(reshape2)
 suppressMessages(library(dplyr))
 library(stringr)
+library(timeDate)
+library(chron)
 
 ### Command-line argument
 args <- commandArgs(trailingOnly = TRUE)
@@ -77,7 +73,9 @@ time_per_df = data.frame(hour, time_period)
 time_per_df_counts = as.data.frame(table(time_per_df$time_period))
 time_per_df_counts <- select(time_per_df_counts, time_period = Var1, time_period_count = Freq)
 
-
+# Relevant holidays database
+holiday_list  <- c("USLaborDay", "USMemorialDay", "USThanksgivingDay", "USVeteransDay")
+holiday_dates <- dates(as.character(holiday(2000:2020, holiday_list)), format = "Y-M-D")
 
 ## Methods 
 
@@ -136,6 +134,7 @@ Clean_Raw <- function(input_df){
     mutate(hour = as.numeric(str_sub(as.character(time_stamp_string), 12, 13))) %>%
     mutate(day_of_week = weekdays(date)) %>%
     filter(day_of_week == "Tuesday" | day_of_week == "Wednesday" | day_of_week == "Thursday") %>%
+    filter(!is.holiday(date, holiday_dates)) %>%
     mutate(lanes = 8) %>%
     mutate(lanes = ifelse(is.na(flow_8), 7, lanes)) %>%
     mutate(lanes = ifelse(is.na(flow_7), 6, lanes)) %>%
