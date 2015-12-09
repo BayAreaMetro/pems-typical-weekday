@@ -3,147 +3,74 @@
 ## Administration
 # 
 ### Purpose
-# `Build Annual Database.Rmd` creates two year-specific databases of typical weekday PeMS traffic data.  One database has hourly summaries and the other has time-period summaries.  This script combines these databases across years and writes out a two consolidated databases in `Rdata` and `CSV` format. 
+# `Build Annual Database.R` creates two year-specific databases of typical weekday PeMS traffic data.  
+#  One database has hourly summaries and the other has time-period summaries.  
+#  This script combines these databases across years and writes out a two consolidated databases in `Rdata` and `CSV` format.
 # 
 ### _ISSUES_
 # 1. 
 # 
-### _TODO_
-# 7.  Put hourly in SQL server --> tableau
 
+## Parameters
 
-## Overhead
+### Relevant year strings
+year_array = c(2005, 2006, 2007, 2008, 2009,
+               2010, 2011, 2012, 2013, 2014,
+               2015)
 
-### Remote file names
+### Input file pieces
+input_file_first = "M:/Data/Traffic/PeMS/"
+input_file_third = "/pems"
+input_file_sixth = ".Rdata"
 
-# Year 2005 data
-YEAR = 2005
-F_2005_HOUR_R   = paste("M:/Data/Traffic/PeMS/",YEAR,"/pems_hour_",YEAR,".Rdata", sep = "")
-F_2005_PERIOD_R = paste("M:/Data/Traffic/PeMS/",YEAR,"/pems_period_",YEAR,".Rdata", sep = "")
+### Output file names
+F_OUTPUT_HOUR_R   = "D:/files/Box Sync/Share Data/pems-typical-weekday/pems_hour.Rdata"
+F_OUTPUT_HOUR_CSV = "D:/files/Box Sync/Share Data/pems-typical-weekday/pems_hour.csv"
 
-# Year 2006 data
-YEAR = 2006
-F_2006_HOUR_R   = paste("M:/Data/Traffic/PeMS/",YEAR,"/pems_hour_",YEAR,".Rdata", sep = "")
-F_2006_PERIOD_R = paste("M:/Data/Traffic/PeMS/",YEAR,"/pems_period_",YEAR,".Rdata", sep = "")
+F_OUTPUT_PERIOD_R   = "D:/files/Box Sync/Share Data/pems-typical-weekday/pems_period.Rdata"
+F_OUTPUT_PERIOD_CSV = "D:/files/Box Sync/Share Data/pems-typical-weekday/pems_period.csv"
 
-# Year 2007 data
-YEAR = 2007
-F_2007_HOUR_R   = paste("M:/Data/Traffic/PeMS/",YEAR,"/pems_hour_",YEAR,".Rdata", sep = "")
-F_2007_PERIOD_R = paste("M:/Data/Traffic/PeMS/",YEAR,"/pems_period_",YEAR,".Rdata", sep = "")
+## Hour reads and binds
+time_period = "_hour_"
 
-# Year 2008 data
-YEAR = 2008
-F_2008_HOUR_R   = paste("M:/Data/Traffic/PeMS/",YEAR,"/pems_hour_",YEAR,".Rdata", sep = "")
-F_2008_PERIOD_R = paste("M:/Data/Traffic/PeMS/",YEAR,"/pems_period_",YEAR,".Rdata", sep = "")
+### initialize with 2005
+year = 2005
+input_file <- paste(input_file_first, year, input_file_third, time_period, year, input_file_sixth, sep = "")
+load(input_file)
+hour_all <- rbind(data_sum_hour_write)
 
-# Year 2009 data
-YEAR = 2009
-F_2009_HOUR_R   = paste("M:/Data/Traffic/PeMS/",YEAR,"/pems_hour_",YEAR,".Rdata", sep = "")
-F_2009_PERIOD_R = paste("M:/Data/Traffic/PeMS/",YEAR,"/pems_period_",YEAR,".Rdata", sep = "")
-
-# Year 2010 data
-YEAR = 2010
-F_2010_HOUR_R   = paste("M:/Data/Traffic/PeMS/",YEAR,"/pems_hour_",YEAR,".Rdata", sep = "")
-F_2010_PERIOD_R = paste("M:/Data/Traffic/PeMS/",YEAR,"/pems_period_",YEAR,".Rdata", sep = "")
-
-# Year 2011 data
-YEAR = 2011
-F_2011_HOUR_R   = paste("M:/Data/Traffic/PeMS/",YEAR,"/pems_hour_",YEAR,".Rdata", sep = "")
-F_2011_PERIOD_R = paste("M:/Data/Traffic/PeMS/",YEAR,"/pems_period_",YEAR,".Rdata", sep = "")
-
-# Year 2012 data
-YEAR = 2012
-F_2012_HOUR_R   = paste("M:/Data/Traffic/PeMS/",YEAR,"/pems_hour_",YEAR,".Rdata", sep = "")
-F_2012_PERIOD_R = paste("M:/Data/Traffic/PeMS/",YEAR,"/pems_period_",YEAR,".Rdata", sep = "")
-
-# Year 2013 data
-YEAR = 2013
-F_2013_HOUR_R   = paste("M:/Data/Traffic/PeMS/",YEAR,"/pems_hour_",YEAR,".Rdata", sep = "")
-F_2013_PERIOD_R = paste("M:/Data/Traffic/PeMS/",YEAR,"/pems_period_",YEAR,".Rdata", sep = "")
-
-# Year 2014 data
-YEAR = 2014
-F_2014_HOUR_R   = paste("M:/Data/Traffic/PeMS/",YEAR,"/pems_hour_",YEAR,".Rdata", sep = "")
-F_2014_PERIOD_R = paste("M:/Data/Traffic/PeMS/",YEAR,"/pems_period_",YEAR,".Rdata", sep = "")
-
-# Ouput 
-F_OUTPUT_HOUR_R   = "D:/files/My Box Files/Share Data/pems-typical-weekday/pems_hour.Rdata"
-F_OUTPUT_HOUR_CSV = "D:/files/My Box Files/Share Data/pems-typical-weekday/pems_hour.csv"
-
-F_OUTPUT_PERIOD_R   = "D:/files/My Box Files/Share Data/pems-typical-weekday/pems_period.Rdata"
-F_OUTPUT_PERIOD_CSV = "D:/files/My Box Files/Share Data/pems-typical-weekday/pems_period.csv"
-
-## Bind and Write
-
-# Hour data
-load(F_2005_HOUR_R)
-hour_2005 <- data_sum_hour_write
-
-load(F_2006_HOUR_R)
-hour_2006 <- data_sum_hour_write
-
-load(F_2007_HOUR_R)
-hour_2007 <- data_sum_hour_write
-
-load(F_2008_HOUR_R)
-hour_2008 <- data_sum_hour_write
-
-load(F_2009_HOUR_R)
-hour_2009 <- data_sum_hour_write
-
-load(F_2010_HOUR_R)
-hour_2010 <- data_sum_hour_write
-
-load(F_2011_HOUR_R)
-hour_2011 <- data_sum_hour_write
-
-load(F_2012_HOUR_R)
-hour_2012 <- data_sum_hour_write
-
-load(F_2013_HOUR_R)
-hour_2013 <- data_sum_hour_write
-
-load(F_2014_HOUR_R)
-hour_2014 <- data_sum_hour_write
-
-hour_all <- rbind(hour_2005, hour_2006, hour_2007, hour_2008, hour_2009, hour_2010, hour_2012, hour_2013, hour_2014)
+### other years
+for(year in year_array){
+  
+  if (year != 2005){
+    input_file <- paste(input_file_first, year, input_file_third, time_period, year, input_file_sixth, sep = "")
+    load(input_file)
+    hour_all <- rbind(hour_all, data_sum_hour_write)
+  }
+}
 
 save(hour_all, file = F_OUTPUT_HOUR_R)
 write.csv(hour_all, file = F_OUTPUT_HOUR_CSV, row.names = FALSE, quote = F) # SQL server does not like quotes
 
-# Period data
-load(F_2005_PERIOD_R)
-period_2005 <- data_sum_period_write
+## Period reads and binds
+time_period = "_period_"
 
-load(F_2006_PERIOD_R)
-period_2006 <- data_sum_period_write
+### initialize with 2005
+year = 2005
+input_file <- paste(input_file_first, year, input_file_third, time_period, year, input_file_sixth, sep = "")
+load(input_file)
+period_all <- rbind(data_sum_period_write)
 
-load(F_2007_PERIOD_R)
-period_2007 <- data_sum_period_write
-
-load(F_2008_PERIOD_R)
-period_2008 <- data_sum_period_write
-
-load(F_2009_PERIOD_R)
-period_2009 <- data_sum_period_write
-
-load(F_2010_PERIOD_R)
-period_2010 <- data_sum_period_write
-
-load(F_2011_PERIOD_R)
-period_2011 <- data_sum_period_write
-
-load(F_2012_PERIOD_R)
-period_2012 <- data_sum_period_write
-
-load(F_2013_PERIOD_R)
-period_2013 <- data_sum_period_write
-
-load(F_2014_PERIOD_R)
-period_2014 <- data_sum_period_write
-
-period_all <- rbind(period_2005, period_2006, period_2007, period_2008, period_2009, period_2010, period_2011, period_2012, period_2013, period_2014)
+### other years
+for(year in year_array){
+  
+  if (year != 2005){
+    input_file <- paste(input_file_first, year, input_file_third, time_period, year, input_file_sixth, sep = "")
+    load(input_file)
+    period_all <- rbind(period_all, data_sum_period_write)
+  }
+}
 
 save(period_all, file = F_OUTPUT_PERIOD_R)
-write.csv(period_all, file = F_OUTPUT_PERIOD_CSV, row.names = FALSE, quote = T) # Tableau is okay with quotes
+write.csv(period_all, file = F_OUTPUT_PERIOD_CSV, row.names = FALSE, quote = F) # SQL server does not like quotes
 

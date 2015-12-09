@@ -30,7 +30,7 @@ args <- commandArgs(trailingOnly = TRUE)
 YEAR_STRING = args[1]
 
 ### Remote file names
-# YEAR_STRING = "2010"
+#YEAR_STRING = "2015"
 F_DATA_MAR = paste("M:/Data/Traffic/PeMS/",YEAR_STRING,"/d04_text_station_hour_",YEAR_STRING,"_03.txt", sep = "")
 F_DATA_APR = paste("M:/Data/Traffic/PeMS/",YEAR_STRING,"/d04_text_station_hour_",YEAR_STRING,"_04.txt", sep = "")
 F_DATA_MAY = paste("M:/Data/Traffic/PeMS/",YEAR_STRING,"/d04_text_station_hour_",YEAR_STRING,"_05.txt", sep = "")
@@ -75,7 +75,7 @@ time_per_df_counts <- select(time_per_df_counts, time_period = Var1, time_period
 
 # Relevant holidays database
 holiday_list  <- c("USLaborDay", "USMemorialDay", "USThanksgivingDay", "USVeteransDay")
-holiday_dates <- dates(as.character(holiday(2000:2020, holiday_list)), format = "Y-M-D")
+holiday_dates <- dates(as.character(holiday(2000:2025, holiday_list)), format = "Y-M-D")
 
 ## Methods 
 
