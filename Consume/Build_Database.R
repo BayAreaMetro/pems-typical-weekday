@@ -24,11 +24,11 @@ input_file_third = "/pems"
 input_file_sixth = ".Rdata"
 
 ### Output file names
-F_OUTPUT_HOUR_R   = "D:/files/Box Sync/Share Data/pems-typical-weekday/pems_hour.Rdata"
-F_OUTPUT_HOUR_CSV = "D:/files/Box Sync/Share Data/pems-typical-weekday/pems_hour.csv"
+F_OUTPUT_HOUR_R   = "~/../Box Sync/Share Data/pems-typical-weekday/pems_hour.Rdata"
+F_OUTPUT_HOUR_CSV = "~/../Box Sync/Share Data/pems-typical-weekday/pems_hour.csv"
 
-F_OUTPUT_PERIOD_R   = "D:/files/Box Sync/Share Data/pems-typical-weekday/pems_period.Rdata"
-F_OUTPUT_PERIOD_CSV = "D:/files/Box Sync/Share Data/pems-typical-weekday/pems_period.csv"
+F_OUTPUT_PERIOD_R   = "~/../Box Sync/Share Data/pems-typical-weekday/pems_period.Rdata"
+F_OUTPUT_PERIOD_CSV = "~/../Box Sync/Share Data/pems-typical-weekday/pems_period.csv"
 
 ## Hour reads and binds
 time_period = "_hour_"
@@ -39,12 +39,17 @@ input_file <- paste(input_file_first, year, input_file_third, time_period, year,
 load(input_file)
 hour_all <- rbind(data_sum_hour_write)
 
+hour_all <- hour_all %>%
+  mutate(state_pm = as.numeric(state_pm))
+
 ### other years
 for(year in year_array){
   
   if (year != 2005){
     input_file <- paste(input_file_first, year, input_file_third, time_period, year, input_file_sixth, sep = "")
     load(input_file)
+    data_sum_hour_write <- data_sum_hour_write %>%
+      mutate(state_pm = as.numeric(state_pm))
     hour_all <- rbind(hour_all, data_sum_hour_write)
   }
 }
@@ -60,6 +65,8 @@ year = 2005
 input_file <- paste(input_file_first, year, input_file_third, time_period, year, input_file_sixth, sep = "")
 load(input_file)
 period_all <- rbind(data_sum_period_write)
+period_all <- period_all %>%
+  mutate(state_pm = as.numeric(state_pm))
 
 ### other years
 for(year in year_array){
@@ -67,6 +74,8 @@ for(year in year_array){
   if (year != 2005){
     input_file <- paste(input_file_first, year, input_file_third, time_period, year, input_file_sixth, sep = "")
     load(input_file)
+    data_sum_period_write <- data_sum_period_write %>%
+      mutate(state_pm = as.numeric(state_pm))
     period_all <- rbind(period_all, data_sum_period_write)
   }
 }
