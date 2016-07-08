@@ -13,6 +13,8 @@ Use PeMS data to explore the validity of the assumptions underlying our volume d
 
 #### TODO
 3.  Make GH pages and re-write memo using embedded Tableau
+5.  Write data to Box
+6.  Some ugly year-specific stuff that could be done better
 
 
 #### OUTPUTS
@@ -46,6 +48,8 @@ META_FNAME_ARRAY = c("2005/d04_text_meta_2005_11_02.txt",
                      "2013/d04_text_meta_2013_12_13.txt",
                      "2014/d04_text_meta_2014_12_06.txt",
                      "2015/d04_text_meta_2015_12_13.txt")
+
+YEAR_ARRAY_STARTING_2006 = c(2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015)
 ```
 
 
@@ -60,6 +64,10 @@ F_META_DATA_LOCATION = "M:/Data/Traffic/PeMS/"
 F_2000_TAZ = "M:/Application/Model One/RTP2017/Scenarios/2000_05_002/OUTPUT/tazData.csv"
 F_2005_TAZ = "M:/Application/Model One/RTP2017/Scenarios/2005_05_003/OUTPUT/tazData.csv"
 F_2010_TAZ = "M:/Application/Model One/RTP2017/Scenarios/2010_05_003/OUTPUT/tazData.csv"
+
+F_TM_CROSS = "M:/Data/Traffic/PeMS/2010/To travel model network/ModelToPemsCrosswalk.csv"
+
+F_TM_NETWORK = "M:/Application/Model One/RTP2017/Scenarios/2010_05_003/OUTPUT/avgload5period.csv"
 
 F_OUTPUT_TABLEAU = "M:/Data/Traffic/PeMS/explore-volume-delay/output_for_tableau.csv"
 
@@ -98,6 +106,17 @@ input_data <- input_data %>%
   select(taz = ZONE, area_type = AREATYPE) %>%
   mutate(year = 2010) 
 input_taz <- rbind(input_taz, input_data)
+
+# 5 - PeMS travel model crosswalk
+input_data <- read.csv(F_TM_CROSS, header = TRUE, sep = ",", stringsAsFactors = FALSE)
+crosswalk_df <- input_data %>%
+  filter(use == 1) %>% # crosswalk also includes parallel HOV links
+  select(station = id, a, b)
+
+# 6 - travel model network to get area type for stations without coordinates
+input_data <- read.csv(F_TM_NETWORK, header = TRUE, sep = ",", stringsAsFactors = FALSE)
+network_df <- input_data %>%
+  select(a, b, area_type_int = at)
 
 remove(input_data)
 
@@ -185,6 +204,61 @@ data_meta <- left_join(data_meta, data_taz_ready, by = c("taz"))
 remove(data_taz, data_taz_melt, data_taz_2005, data_taz_2010)
 
 ```
+
+#### Use crosswalk and network to get area type for stations with missing coordinates
+```{r check-crosswalk}
+missing_meta <- input_meta %>%
+  filter(is.na(latitude)) %>%
+  select(station) %>%
+  ungroup()
+
+missing_meta <- left_join(missing_meta, crosswalk_df, by = c("station"))
+
+missing_meta <- missing_meta %>%
+  filter(!(is.na(a)))
+
+missing_meta <- left_join(missing_meta, network_df, by = c("a", "b"))
+
+missing_meta <- missing_meta %>%
+  filter(!(is.na(area_type_int))) %>%
+  select(station, area_type_int) %>%
+  mutate(area_type = 'Missing') %>%
+  mutate(area_type = ifelse(area_type_int == 5, "Rural", area_type)) %>%
+  mutate(area_type = ifelse(area_type_int == 4, "Suburban", area_type)) %>%
+  mutate(area_type = ifelse(area_type_int == 3, "Urban", area_type)) %>%
+  mutate(area_type = ifelse(area_type_int == 2, "Urban Business", area_type)) %>%
+  mutate(area_type = ifelse(area_type_int == 1, "Central Business District", area_type)) %>%
+  mutate(area_type = ifelse(area_type_int == 0, "Regional Core", area_type)) %>%
+  mutate(latitude = NA, longitude = NA, taz = NA, closest_taz_distance = NA)
+
+# Need to add year -- assume area type is constant
+missing_meta_original <- missing_meta
+missing_meta <- missing_meta_original %>%
+  mutate(year = 2005)
+for(year_counter in YEAR_ARRAY_STARTING_2006){
+  temp <- missing_meta_original %>%
+    mutate(year = year_counter)
+  missing_meta <- rbind(missing_meta, temp) 
+}
+
+# Check that there's no overlap
+check_missing <- missing_meta %>%
+  select(station) %>%
+  mutate(donkey = "victory")
+
+check_meta <- data_meta %>%
+  select(station)
+
+check_meta <- left_join(check_meta, check_missing, by = c("station"))
+
+table(check_meta$donkey)
+
+# Append
+data_meta <- rbind(data_meta, missing_meta)
+
+remove(missing_meta_original, check_missing, check_meta)
+```
+
 
 #### Create data for Tableau
 ```{r create-tableau}
