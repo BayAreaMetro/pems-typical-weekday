@@ -1,0 +1,39 @@
+# Dependencies
+markdown: kramdown
+kramdown:
+  extensions: ["tables", "no_intra_emphasis", "fenced_code_blocks", "autolink", "strikethrough", "superscript", "with_toc_data"]
+
+rouge:         true
+
+# Permalinks
+permalink:        pretty
+
+# Setup
+title:            Fun with PeMS
+tagline:          'Metropolitan Transportation Commission'
+url:              http://metropolitantransportationcommission.github.io/pems-typical-weekday
+shorturl:         metropolitantransportationcommission.github.io/pems-typical-weekday
+
+author:
+  name:           'David Ory'
+  url:            https://github.com/DavidOry
+
+paginate:         1
+
+# Custom vars
+version:          1.0.0
+
+github:
+  repo:           https://github.com/MetropolitanTransportationCommission/pems-typical-weekday/tree/gh-pages
+
+# This is the list of pages to include in the header of the website.
+pages_list:       
+  Data: 'data/'
+  Flows and Speeds: 'flows_speeds/'  
+  Volume Delay Validation: 'vdf_validation/'
+  
+
+# Allow URL Redirects: 
+#  * https://help.github.com/articles/redirects-on-github-pages
+gems:
+  - jekyll-redirect-from
