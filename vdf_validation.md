@@ -39,6 +39,9 @@ The MTC travel model predicts traveler behavior for a typical weekday -- when sc
 * Consider data from every past historical year for which data is available. At the time of writing, this includes 2005 through 2015. 
 * Only consider data from functioning detectors. Specifically: records for which 100 percent of the observations that make up the computed averages is observed, rather than imputed (Caltrans imputes data when the detectors are down or working intermittently).
 
+One more step is carried out in a separate [script](https://github.com/MetropolitanTransportationCommission/pems-typical-weekday/blob/master/volume-delay/validate-volume-delay.Rmd) to prepare the PeMS data for this analysis specifically (the data resulting from the above steps is used for a variety of purposes):
+* Only considered sensors on the following routes: 4, 17, 24, 80, 84, 85, 87, 92, 101, 237, 280, 380, 580, 680, 780, 880, and 980. While MTC mapped many of the PeMS sensors to our travel model network, we did not map them all.  As such, we cannot ensure that each sensor is mapped to a roadway of a known -- to the travel model -- facility type.  To increase the chances that every sensor we are examining is on a facility designated as a "freeway" in our travel model, we first exclude any sensors that are mapped to non freeways and then only select routes that are, in the Bay Area, largely grade-separated freeways. Note that these manipulations are carried out in this script. 
+
 After extracting hourly data, for each year of typical weekdays, we compute the following statistics:
 
 * median, average, and standard deviation of flow (vehicles passing the sensor);
@@ -54,7 +57,7 @@ We then compute a flow-weighted speed and occupancy estimate for each of the tim
 
 `area type density index = (total population + 2.5 * total employment)/(residential acres + commercial acres + industrial acres)`
 
-Each link is assigned one of six area type categories, as shown in Table 1. The thresholds are not strict and are hand-smoothed to make them continuous across the network. Importantly, in this document we are only examining the capacity of freeways, which is one of eight facility types used in *Travel Model One* (each of the eight have similar capacity assumptions). Throughout this document we assume that all the PeMS data is collected on roadways that *Travel Model One* identifies as freeways -- this is generally, but not strictly, true. 
+Each link is assigned one of six area type categories, as shown in Table 1. The thresholds are not strict and are hand-smoothed to make them continuous across the network. Importantly, in this document we are only examining the capacity of "freeways", which is one of eight facility types used in *Travel Model One* (each of the eight have similar capacity assumptions). As noted above, most all of the PeMS sensors are on roadways the travel model designates as "freeways" and we filtered out routes that we would not expect to be designated as freeways.  
 
 **Table 1: Area Type Density Thresholds and Freeway Capacity Assumptions**
 
