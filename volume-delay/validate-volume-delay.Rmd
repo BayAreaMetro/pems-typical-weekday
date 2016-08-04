@@ -116,7 +116,7 @@ crosswalk_df <- input_data %>%
 # 6 - travel model network to get area type for stations without coordinates
 input_data <- read.csv(F_TM_NETWORK, header = TRUE, sep = ",", stringsAsFactors = FALSE)
 network_df <- input_data %>%
-  select(a, b, area_type_int = at)
+  select(a, b, area_type_int = at, facility_type_int = ft)
 
 remove(input_data)
 
@@ -259,10 +259,32 @@ data_meta <- rbind(data_meta, missing_meta)
 remove(missing_meta_original, check_missing, check_meta)
 ```
 
+#### Filter non-freeways
+```{r ft-check}
+hour_freeways <- hour_all %>%
+  filter(route == 4 |
+           route == 17 |
+           route == 24 |
+           route == 80 |
+           route == 84 |
+           route == 85 |
+           route == 87 |
+           route == 92 |
+           route == 101 |
+           route == 237 |
+           route == 280 |
+           route == 380 |
+           route == 580 |
+           route == 680 |
+           route == 780 |
+           route == 880 |
+           route == 980)
+```
+
 
 #### Create data for Tableau
 ```{r create-tableau}
-tableau_out <- hour_all %>%
+tableau_out <- hour_freeways %>%
   ungroup() %>%
   filter(type == "ML") %>%
   select(year, station, hour, flow = median_flow, lanes, speed = median_speed, occupancy = median_occup) %>%
