@@ -57,9 +57,12 @@ We then compute a flow-weighted speed and occupancy estimate for each of the tim
 
 `area type density index = (total population + 2.5 * total employment)/(residential acres + commercial acres + industrial acres)`
 
-Each link is assigned one of six area type categories, as shown in Table 1. The thresholds are not strict and are hand-smoothed to make them continuous across the network. Importantly, in this document we are only examining the capacity of "freeways", which is one of eight facility types used in *Travel Model One* (each of the eight have similar capacity assumptions). As noted above, most all of the PeMS sensors are on roadways the travel model designates as "freeways" and we filtered out routes that we would not expect to be designated as freeways.  
+Each link is assigned one of six area type categories, as shown in [Table 1](#table-1). The thresholds are not strict and are hand-smoothed to make them continuous across the network. Importantly, in this document we are only examining the capacity of "freeways", which is one of eight facility types used in *Travel Model One* (each of the eight have similar capacity assumptions). As noted above, most all of the PeMS sensors are on roadways the travel model designates as "freeways" and we filtered out routes that we would not expect to be designated as freeways. 
 
-**Table 1: Area Type Density Thresholds and Freeway Capacity Assumptions**
+The capacities assumed for each freeway in each of the six area types are also shown in [Table 1](#table-1). We know that freeways do not behave in as uniform manner as the table implies: each segment, even adjacent segments in the same urban environment, likely has a slightly different effective capacity due to differences in lane widths, shoulder widths, horizontal alignment, vertical alignment, pavement condition, presence of combination trucks, adjacent visual distractions, presence of weaving sections, etc.   
+
+#### Table 1
+#### Area Type Density Thresholds and Freeway Capacity Assumptions
 
 | **Area Type**              | **Area Type Density Index (from, to)**| **Assumed Freeway Capacity (passengers cars per hour per lane)**|
 |:---------------------------|---------------------------------------|-----------------------------------------------------------------|
@@ -70,7 +73,13 @@ Each link is assigned one of six area type categories, as shown in Table 1. The 
 | Suburban                   | 6, 30                                 | 2150                                                            |
 | Rural                      | 0, 6                                  | 2150                                                            | 
 
+Now that we've detailed our observed data and outlined the assumptions behind *Travel Model One's* input capacity assumptions, we can begin our first line of inquiry. We begin with a basic question: do the PeMS data support segmenting freeway capacity by *Travel Model One's* area type index categories?
 
+We answer this question via the following steps:
+
+1. Identify the area type for each PeMS station. This is done by simply locating the nearest travel analysis zone to the station; the resulting map is shown in [Figure 1](#figure-1).
+
+2. Compute the roadway density in vehicles per mile per lane by taking the ratio of the observed flow (in vehicles per hour per lane) and the observed speed (miles per hour). 
 
 
 
