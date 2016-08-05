@@ -55,14 +55,14 @@ We then compute a flow-weighted speed and occupancy estimate for each of the tim
 ## Roadway Capacity
 *Travel Model One* uses a simple look-up table to estimate each roadway's effective operating capacity. Specifically, a roadway's facility type and area type determine the roadway's capacity. A facility's area type is determined by the use of land immediately adjacent to the roadway using an area type density measure, which is computed as follows:
 
-`area type density index = (total population + 2.5 * total employment)/(residential acres + commercial acres + industrial acres)`
+> `area type density index = (total population + 2.5 * total employment)/(residential acres + commercial acres + industrial acres)`
 
-Each link is assigned one of six area type categories, as shown in [Table 1](#table-1). The thresholds are not strict and are hand-smoothed to make them continuous across the network. Importantly, in this document we are only examining the capacity of "freeways", which is one of eight facility types used in *Travel Model One* (each of the eight have similar capacity assumptions). As noted above, most all of the PeMS sensors are on roadways the travel model designates as "freeways" and we filtered out routes that we would not expect to be designated as freeways. 
+Each link is assigned one of six area type categories, as shown in [Table 1](#table-1). The thresholds are not strict and are hand-smoothed to make them continuous across the network. Importantly, in this document we are only examining the capacity of "freeways", which is one of [ten facility types](http://mtcgis.mtc.ca.gov/foswiki/Main/MasterNetworkLookupTables#Facility_type_40FT_41) used in *Travel Model One* (each of the ten have similar capacity assumptions). As noted above, most all of the PeMS sensors are on roadways the travel model designates as "freeways" and we filtered out routes that we would not expect to be designated as freeways. 
 
 The capacities assumed for each freeway in each of the six area types are also shown in [Table 1](#table-1). We know that freeways do not behave in as uniform manner as the table implies: each segment, even adjacent segments in the same urban environment, likely has a slightly different effective capacity due to differences in lane widths, shoulder widths, horizontal alignment, vertical alignment, pavement condition, presence of combination trucks, adjacent visual distractions, presence of weaving sections, etc.   
 
 #### Table 1
-#### Area Type Density Thresholds and Freeway Capacity Assumptions
+#### Assumed Capacity Estimates by Area Type
 
 | **Area Type**              | **Area Type Density Index (from, to)**| **Assumed Freeway Capacity (passengers cars per hour per lane)**|
 |:---------------------------|---------------------------------------|-----------------------------------------------------------------|
@@ -73,13 +73,113 @@ The capacities assumed for each freeway in each of the six area types are also s
 | Suburban                   | 6, 30                                 | 2150                                                            |
 | Rural                      | 0, 6                                  | 2150                                                            | 
 
-Now that we've detailed our observed data and outlined the assumptions behind *Travel Model One's* input capacity assumptions, we can begin our first line of inquiry. We begin with a basic question: do the PeMS data support segmenting freeway capacity by *Travel Model One's* area type index categories?
+Now that we've detailed our observed data and outlined the assumptions behind *Travel Model One's* input capacity assumptions, we can begin our first line of inquiry. We begin with a basic question: do the PeMS data support segmenting freeway capacity by *Travel Model One's* area type index categories? And, then, if so, our are assumed capacities correct?
 
 We answer this question via the following steps:
 
 1. Identify the area type for each PeMS station. This is done by simply locating the nearest travel analysis zone to the station; the resulting map is shown in [Figure 1](#figure-1).
 
 2. Compute the roadway density in vehicles per mile per lane by taking the ratio of the observed flow (in vehicles per hour per lane) and the observed speed (miles per hour). 
+
+3. Plot the observed flow by the observed density for the one hour time periods during which we are most likely to observe the maximum flow. [Figure 2](#figure-2) shows the familiar (to traffic engineers) flow/density relationship for four hours during the morning commute. [Figure 3](#figure-3) shows the flow/density relationship for four hours during the evening commute.
+
+4. Using [Figure 2](#figure-2) and [Figure 3](#figure-3), determine the one-hour time period during which flow is highest. For this time period, plot the flow/density relationship by area type. This is done in [Figure 4](#figure-4) for the highest-flow morning commute hour and in [Figure 5](#figure-5) for the highest-flow evening commute hour. 
+
+5. Compute maximum flow, and other metrics to frame the maximum, statistics by area type. These results are shown in [Figure 6](#figure-6) for the morning commute hour and [Figure 7](#figure-7) for the evening commute hour.
+
+#### Figure 1
+#### Location and Area Type of PeMS Stations
+
+#### Figure 2
+#### Flow versus Density Across All Stations during the Morning Commute
+
+#### Figure 3
+#### Flow versus Density Across All Stations during the Evening Commute
+
+#### Figure 4
+#### Flow versus Density by Area Type during the Morning Commute
+
+#### Figure 5
+#### Flow versus Density by Area Type during the Evening Commute
+
+#### Figure 6
+#### Implied Capacity Estimates by Area Type during the Morning Commute
+
+#### Figure 7
+#### Implied Capacity Estimates by Area Type during the Evening Commute
+
+
+The results of the above steps are shown in [Table 2](#table-2). At first glance these numbers appear to support MTC's approach of segmenting capacity by area type as well as the range of our capacity assumptions. One exception is the low capacity estimates for the "Central business district" area type, for which our maximum observation (1780 and 1420) is quite a bit lower than our assumption of 2050 vehicles per hour per lane. Unfortunately we have many fewer stations and observations for the central business district (only 11 in the dataset) than we do the other area types. However, the results do suggest a reduction in the capacity of freeways in this area type is warranted.
+
+The other exception is the seemingly more efficient use of roadways during the morning commute relative to the evening commute. As travelers departure times are more consistent in the morning, there seems to be decent theoretical and, per [Table 2](#table-2) empirical, motivation for higher capacity assumptions in the morning commute period relative to the afternoon.      
+
+#### Table 2
+#### Implied Capacity Estimates by Area Type
+
+| **Area Type**              | **Implied Capacity during Morning Commute** | **Implied Capacity during Evening Commute** |
+|:---------------------------|---------------------------------------------|---------------------------------------------|
+| Regional core              | Insufficient data                           | Insufficient data                           |
+| Central business district  | 1780                                        | 1420                                        | 
+| Urban business             | 2090                                        | 1950                                        | 
+| Urban                      | 2140                                        | 2060                                        |
+| Suburban                   | 2150                                        | 2060                                        |
+| Rural                      | 2150                                        | 2040                                        | 
+
+## Free-flow Speed
+*Travel Model One* uses a simple look up table to determine the free-flow speed (i.e., the speed at which vehicles travel when there is no congestion) on each roadway segment. Similar to the capacity assumption, the free-flow speed is determined by two variables: facility type and area type. For freeways (again, [one of ten facility types](http://mtcgis.mtc.ca.gov/foswiki/Main/MasterNetworkLookupTables#Facility_type_40FT_41) used by *Travel Model One*), the assumed free-flow speeds are shown in [Table 3](#table-3).
+
+#### Table 3
+#### Assumed Free-flow Speed Estimates by Area Type
+
+| **Area Type**              | **Assumed Speed (miles per hour)** |
+|:---------------------------|------------------------------------|
+| Regional core              | 55                                 |                
+| Central business district  | 55                                 | 
+| Urban business             | 60                                 | 
+| Urban                      | 60                                 |
+| Suburban                   | 65                                 |
+| Rural                      | 65                                 | 
+
+Using the PeMS data, we can ask two interesting questions: (i) is it reasonable to segment free-flow speed by MTC's area types and (ii) are the free-flow speed assumptions reasonable. As with the previous discussion on capacity, it is important to net that we are only examining the assumptions made for freeways. 
+
+To estimate the free-flow speed of the Bay Area residents we are simulating in our travel model, we select the time periods at the beginning of the morning commute and the end of the evening commute, as these times likely include resident travelers and have little congestion. [Figure 8](#figure-8) plots the observed speed of travelers during the hour from four to five a.m. against sensor occupancy (i.e., the percentage of time the loop detector has a vehicle above it), segmented by area type. A companion plot is presented in [Figure 9](#figure-9) for the hour from seven to eight p.m. The vast majority of observations in these plots occure at very low sensor occupancy rates, suggesting -- as hoped -- little congestion.
+
+#### Figure 8
+#### Observed Speed by Area Type from 4 to 5 am
+
+#### Figure 9
+#### Observed Speed by Area Type from 7 to 8 pm
+
+Speed statistics are extracting from the data and shown in [Figure 10](#figure-10) and [Figure 11](#figure-11). [Table 4](#table-4) below summarizes the median speeds from the two charts and presents those as the implied free-flow speeds. Note that in the case of trying to estimate the physical capacity, using the maximum makes the most sense as we are trying to gauge how many cars can move through the roadway segment. In the case of free-flow speed, we are trying to understand the typical behavior of the typical driver, which logically points to using the median.
+
+#### Table 3
+#### Implied Free-flow Speed Estimates by Area Type
+
+| **Area Type**              | **Implied Free-flow speed during Morning Commute** | **Implied Free-flow Speed during Evening Commute** |
+|:---------------------------|----------------------------------------------------|----------------------------------------------------|
+| Regional core              | Insufficient data                                  | Insufficient data                                  |
+| Central business district  | 67.7                                               | 67.6                                               | 
+| Urban business             | 67.9                                               | 67.9                                               | 
+| Urban                      | 67.2                                               | 67.3                                               |
+| Suburban                   | 67.3                                               | 67.6                                               |
+| Rural                      | 67.9                                               | 68.2                                               | 
+
+The evidence in [Table 3](#table-3) suggests that segmenting free-flow speed by area type is not warranted. Two potentially superior approaches may be: (i) using 67 miles per hour for all freeways or (ii) using the posted speed limit. The latter suggestion may be feasible in MTC's forthcoming *Travel Model Two*, which uses a navigation network for which posted speeds may be available. 
+
+## Volume Delay Functions
+*Travel Model One* uses a variation of the BPR curve to cpmute congestion on freeways. The function is as follows:
+
+> `congested travel time = free-flow travel time * (1 + alpha * (4/3 * volume/capacity)^beta)`,
+>
+> where `alpha` is 0.20 in *Travel Model One* and beta is 6.0.
+
+START ABOVE    
+
+
+
+
+
+
 
 
 
