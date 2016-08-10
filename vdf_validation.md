@@ -64,7 +64,7 @@ Each link is assigned one of six area type categories, as shown in [Table 1](#ta
 The capacities assumed for each freeway in each of the six area types are also shown in [Table 1](#table-1). We know that freeways do not behave in as uniform manner as the table implies: each segment, even adjacent segments in the same urban environment, likely has a slightly different effective capacity due to differences in lane widths, shoulder widths, horizontal alignment, vertical alignment, pavement condition, presence of combination trucks, adjacent visual distractions, presence of weaving sections, etc.   
 
 #### Table 1
-#### Assumed Capacity Estimates by Area Type
+*Assumed Capacity Estimates by Area Type*
 
 | **Area Type**              | **Area Type Density Index (from, to)**| **Assumed Freeway Capacity (passengers cars per hour per lane)**|
 |:---------------------------|---------------------------------------|-----------------------------------------------------------------|
@@ -90,10 +90,14 @@ We answer this question via the following steps:
 5. Compute maximum flow, and other metrics to frame the maximum, statistics by area type. These results are shown in [Figure 6](#figure-6) for the morning commute hour and [Figure 7](#figure-7) for the evening commute hour.
 
 #### Figure 1
-#### Location and Area Type of PeMS Stations
+*Location and Area Type of PeMS Stations*
+
+<div class='tableauPlaceholder' id='viz1470865888023' style='position: relative'><noscript><a href='#'><img alt='Location and Area Type of PeMS Stations ' src='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;pe&#47;pems-vdf-fig-01&#47;areatypemap&#47;1_rss.png' style='border: none' /></a></noscript><object class='tableauViz'  style='display:none;'><param name='host_url' value='https%3A%2F%2Fpublic.tableau.com%2F' /> <param name='site_root' value='' /><param name='name' value='pems-vdf-fig-01&#47;areatypemap' /><param name='tabs' value='no' /><param name='toolbar' value='yes' /><param name='static_image' value='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;pe&#47;pems-vdf-fig-01&#47;areatypemap&#47;1.png' /> <param name='animate_transition' value='yes' /><param name='display_static_image' value='yes' /><param name='display_spinner' value='yes' /><param name='display_overlay' value='yes' /><param name='display_count' value='yes' /></object></div>                <script type='text/javascript'>                    var divElement = document.getElementById('viz1470865888023');                    var vizElement = divElement.getElementsByTagName('object')[0];                    vizElement.style.width='100%';vizElement.style.height=(divElement.offsetWidth*0.75)+'px';                    var scriptElement = document.createElement('script');                    scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js';                    vizElement.parentNode.insertBefore(scriptElement, vizElement);                </script>
 
 #### Figure 2
-#### Flow versus Density Across All Stations during the Morning Commute
+*Flow versus Density Across All Stations during the Morning Commute*
+
+<div class='tableauPlaceholder' id='viz1470865888023' style='position: relative'><noscript><a href='#'><img alt='Flow versus Density for Morning Commute Period ' src='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;pe&#47;pems-vdf-fig-01&#47;morningflowdens&#47;1_rss.png' style='border: none' /></a></noscript><object class='tableauViz'  style='display:none;'><param name='host_url' value='https%3A%2F%2Fpublic.tableau.com%2F' /> <param name='site_root' value='' /><param name='name' value='pems-vdf-fig-01&#47;morningflowdens' /><param name='tabs' value='no' /><param name='toolbar' value='yes' /><param name='static_image' value='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;pe&#47;pems-vdf-fig-01&#47;morningflowdens&#47;1.png' /> <param name='animate_transition' value='yes' /><param name='display_static_image' value='yes' /><param name='display_spinner' value='yes' /><param name='display_overlay' value='yes' /><param name='display_count' value='yes' /></object></div>                <script type='text/javascript'>                    var divElement = document.getElementById('viz1470865888023');                    var vizElement = divElement.getElementsByTagName('object')[0];                    vizElement.style.width='100%';vizElement.style.height=(divElement.offsetWidth*0.75)+'px';                    var scriptElement = document.createElement('script');                    scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js';                    vizElement.parentNode.insertBefore(scriptElement, vizElement);                </script>
 
 #### Figure 3
 #### Flow versus Density Across All Stations during the Evening Commute
