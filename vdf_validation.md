@@ -167,22 +167,29 @@ Speed statistics are extracting from the data and shown in [Figure 10](#figure-1
 The evidence in [Table 3](#table-3) suggests that segmenting free-flow speed by area type is not warranted. Two potentially superior approaches may be: (i) using 67 miles per hour for all freeways or (ii) using the posted speed limit. The latter suggestion may be feasible in MTC's forthcoming *Travel Model Two*, which uses a navigation network for which posted speeds may be available. 
 
 ## Volume Delay Functions
-*Travel Model One* uses a variation of the BPR curve to cpmute congestion on freeways. The function is as follows:
+*Travel Model One* uses a variation of the Bureau of Public Road (BPR) curve to compute congestion on freeways. We refer to these curves as "volume-delay functions". The function is as follows:
 
 > `congested travel time = free-flow travel time * (1 + alpha * (4/3 * volume/capacity)^beta)`,
 >
-> where `alpha` is 0.20 in *Travel Model One* and beta is 6.0.
+> where, in *Travel Model One*, `alpha` is 0.20 and beta is 6.0.
 
-START ABOVE    
+To use the BPR curve, we must provide (a) a free-flow speed on each roadway segment; (b) an estimate of effective capacity for each roadway segment; and, (c) determine the parameters `alpha` and `beta`. The previous two sections of this discussed the assumptions we make regarding (a) and (b) and used the PeMS data to assess the reasonableness of those assumptions. Comfortable that our assumptions for free-flow speed and capacity are, while not perfect, reasonable, we can use the estimates of observed flow from the PeMS database as a surrogate for demand and then compute estmates of congested travel time using the BPR curve. The estimated travel time can be converted to speed and compared directly to the observed speeds in the PeMS database. This examination should help us assess the reasonableness of the BPR curves.  
 
+The PeMS database contains estimates of traffic flow (i.e., the number of cars that pass a roadway detector per unit of time). Flow is a revealed expression of an unobserved demand for vehicle travel (i.e., the number of cars that **want to** pass a roadway detector per unit of time). *Travel Model One* estimates demand. The flow on a roadway segment cannot exceed a roadway's effective capacity; the demand can. When examining the PeMS data, we will often observe similar observed flows for roadways operating at dramatically different speeds: low flow when traffic is light and speeds are high and similarly low flow when traffic is heavy and speeds are low. 
 
+The first assessment of the performance of the volume-delay functions plots the observed volume-to-capacity ratio against observed travel speed along with the assumed BPR curves. We use "volume" here to use either observed flow (when plotting the PeMS data) or unobserved demand (when plotting the BPR curves). These charts are shown in [Figure 11](#figure-11) and are segmented by time period. Important notes regarding these plots are as follows:
 
+* We assume a capacity of 2,200 vehicles per hour per lane and a free-flow speed of 67 miles per hour for each of the station.
+* We include points for which the demand exceeds the roadway capacity. In the PeMS data, flow is low, so these points appear close to the origin on the chart (low observed speed, low volume-to-capacity ratio). If we knew the demand, however, these points would appear in the lower right-hand corner of the plot (low observed speed, high demand-to-capacity ratio). We include these points in the chart, but note that "volume" for the PeMS data has a different meaning than "volume" for the BPR curves.
+* The plots generally show the curves fit the data reasonable well. 
 
+#### Figure 11
+#### Observed Speed against Observed Volume-to-Capacity Ratio
 
+The second assessment of the performance of the volume-delay functions focuses on the aforementioned problematic cases in which demand exceeds capacity. Here, density, which is the quantity hourly flow divided by speed) is plotted against speed. These plots reveal observed travel speeds when densities exceed the critical threshold at which speeds begin to degrade (which is around 30 vehicles per mile, as shown in [Figure 2](#figure-2) and [Figure 3](#figure-3)). [Figure 12](#figure-12) compares the BPR curves to the observed data by time period. These charts again assume a capacity for each station of 2,200 vehicles per hour per lane.
 
+Each of the commute period plots show the curves perform okay at high densities.
 
+## Conclusion
+In sum, this investigation demonstrates that MTC's *Travel Model One* deploys reasonable procedures for translating vehicle demand to roadway speeds. 
 
-
- 
-
- 
