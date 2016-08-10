@@ -104,19 +104,34 @@ We answer this question via the following steps:
 
 
 #### Figure 3
-#### Flow versus Density Across All Stations during the Evening Commute
+*Flow versus Density Across All Stations during the Evening Commute*
+
+<script type='text/javascript' src='https://public.tableausoftware.com/javascripts/api/viz_v1.js'></script>
+<div style="width: 1000px; height: 900px;"><noscript><a href='#'><img alt=" " src="https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;pe&#47;pems-vdf-fig-01&#47;eveningflowdens&#47;1_rss.png" style="border: none;" /></a></noscript><object class='tableauViz' width='1000' height='900' style='display:none;'><param name='host_url' value='https%3A%2F%2Fpublic.tableausoftware.com%2F' /> <param name='site_root' value='' /><param name='name' value='pems-vdf-fig-01&#47;eveningflowdens' /><param name='tabs' value='no' /><param name='toolbar' value='yes' /><param name='static_image' value='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;pe&#47;pems-vdf-fig-01&#47;eveningflowdens&#47;1_rss.png' /> <param name='animate_transition' value='yes' /><param name='display_static_image' value='yes' /><param name='display_spinner' value='yes' /><param name='display_overlay' value='yes' /><param name='display_count' value='yes' /></object></div> <div style="width: 1000px; height: 22px; padding: 0px 10px 0px 0px; color: black; font: normal 8pt verdana,helvetica,arial,sans-serif;"> <div style="float: right; padding-right: 8px;"><a href='http://www.tableausoftware.com/public/about-tableau-products?ref=https://public.tableau.com/views/pems-vdf-fig-01/eveningflowdens' target='_blank'>Learn About Tableau</a></div> </div>      
 
 #### Figure 4
-#### Flow versus Density by Area Type during the Morning Commute
+*Flow versus Density by Area Type during the Morning Commute*
+
+<script type='text/javascript' src='https://public.tableausoftware.com/javascripts/api/viz_v1.js'></script>
+<div style="width: 1000px; height: 900px;"><noscript><a href='#'><img alt=" " src="https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;pe&#47;pems-vdf-fig-01&#47;morningflowdensat&#47;1_rss.png" style="border: none;" /></a></noscript><object class='tableauViz' width='1000' height='900' style='display:none;'><param name='host_url' value='https%3A%2F%2Fpublic.tableausoftware.com%2F' /> <param name='site_root' value='' /><param name='name' value='pems-vdf-fig-01&#47;morningflowdensat' /><param name='tabs' value='no' /><param name='toolbar' value='yes' /><param name='static_image' value='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;pe&#47;pems-vdf-fig-01&#47;morningflowdensat&#47;1_rss.png' /> <param name='animate_transition' value='yes' /><param name='display_static_image' value='yes' /><param name='display_spinner' value='yes' /><param name='display_overlay' value='yes' /><param name='display_count' value='yes' /></object></div> <div style="width: 1000px; height: 22px; padding: 0px 10px 0px 0px; color: black; font: normal 8pt verdana,helvetica,arial,sans-serif;"> <div style="float: right; padding-right: 8px;"><a href='http://www.tableausoftware.com/public/about-tableau-products?ref=https://public.tableau.com/views/pems-vdf-fig-01/morningflowdensat' target='_blank'>Learn About Tableau</a></div> </div>      
 
 #### Figure 5
-#### Flow versus Density by Area Type during the Evening Commute
+*Flow versus Density by Area Type during the Evening Commute*
+
+<script type='text/javascript' src='https://public.tableausoftware.com/javascripts/api/viz_v1.js'></script>
+<div style="width: 1000px; height: 900px;"><noscript><a href='#'><img alt=" " src="https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;pe&#47;pems-vdf-fig-01&#47;eveningflowdensat&#47;1_rss.png" style="border: none;" /></a></noscript><object class='tableauViz' width='1000' height='900' style='display:none;'><param name='host_url' value='https%3A%2F%2Fpublic.tableausoftware.com%2F' /> <param name='site_root' value='' /><param name='name' value='pems-vdf-fig-01&#47;eveningflowdensat' /><param name='tabs' value='no' /><param name='toolbar' value='yes' /><param name='static_image' value='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;pe&#47;pems-vdf-fig-01&#47;eveningflowdensat&#47;1_rss.png' /> <param name='animate_transition' value='yes' /><param name='display_static_image' value='yes' /><param name='display_spinner' value='yes' /><param name='display_overlay' value='yes' /><param name='display_count' value='yes' /></object></div> <div style="width: 1000px; height: 22px; padding: 0px 10px 0px 0px; color: black; font: normal 8pt verdana,helvetica,arial,sans-serif;"> <div style="float: right; padding-right: 8px;"><a href='http://www.tableausoftware.com/public/about-tableau-products?ref=https://public.tableau.com/views/pems-vdf-fig-01/eveningflowdensat' target='_blank'>Learn About Tableau</a></div> </div>      
 
 #### Figure 6
-#### Implied Capacity Estimates by Area Type during the Morning Commute
+*Implied Capacity Estimates by Area Type during the Morning Commute*
+
+<script type='text/javascript' src='https://public.tableausoftware.com/javascripts/api/viz_v1.js'></script>
+<div style="width: 1000px; height: 900px;"><noscript><a href='#'><img alt=" " src="https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;pe&#47;pems-vdf-fig-01&#47;morningcapacity&#47;1_rss.png" style="border: none;" /></a></noscript><object class='tableauViz' width='1000' height='900' style='display:none;'><param name='host_url' value='https%3A%2F%2Fpublic.tableausoftware.com%2F' /> <param name='site_root' value='' /><param name='name' value='pems-vdf-fig-01&#47;morningcapacity' /><param name='tabs' value='no' /><param name='toolbar' value='yes' /><param name='static_image' value='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;pe&#47;pems-vdf-fig-01&#47;morningcapacity&#47;1_rss.png' /> <param name='animate_transition' value='yes' /><param name='display_static_image' value='yes' /><param name='display_spinner' value='yes' /><param name='display_overlay' value='yes' /><param name='display_count' value='yes' /></object></div> <div style="width: 1000px; height: 22px; padding: 0px 10px 0px 0px; color: black; font: normal 8pt verdana,helvetica,arial,sans-serif;"> <div style="float: right; padding-right: 8px;"><a href='http://www.tableausoftware.com/public/about-tableau-products?ref=https://public.tableau.com/views/pems-vdf-fig-01/morningcapacity' target='_blank'>Learn About Tableau</a></div> </div>      
 
 #### Figure 7
-#### Implied Capacity Estimates by Area Type during the Evening Commute
+*Implied Capacity Estimates by Area Type during the Evening Commute*
+
+<script type='text/javascript' src='https://public.tableausoftware.com/javascripts/api/viz_v1.js'></script>
+<div style="width: 1000px; height: 900px;"><noscript><a href='#'><img alt=" " src="https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;pe&#47;pems-vdf-fig-01&#47;eveningcapacity&#47;1_rss.png" style="border: none;" /></a></noscript><object class='tableauViz' width='1000' height='900' style='display:none;'><param name='host_url' value='https%3A%2F%2Fpublic.tableausoftware.com%2F' /> <param name='site_root' value='' /><param name='name' value='pems-vdf-fig-01&#47;eveningcapacity' /><param name='tabs' value='no' /><param name='toolbar' value='yes' /><param name='static_image' value='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;pe&#47;pems-vdf-fig-01&#47;eveningcapacity&#47;1_rss.png' /> <param name='animate_transition' value='yes' /><param name='display_static_image' value='yes' /><param name='display_spinner' value='yes' /><param name='display_overlay' value='yes' /><param name='display_count' value='yes' /></object></div> <div style="width: 1000px; height: 22px; padding: 0px 10px 0px 0px; color: black; font: normal 8pt verdana,helvetica,arial,sans-serif;"> <div style="float: right; padding-right: 8px;"><a href='http://www.tableausoftware.com/public/about-tableau-products?ref=https://public.tableau.com/views/pems-vdf-fig-01/eveningcapacity' target='_blank'>Learn About Tableau</a></div> </div>    
 
 
 The results of the above steps are shown in [Table 2](#table-2). At first glance these numbers appear to support MTC's approach of segmenting capacity by area type as well as the range of our capacity assumptions. One exception is the low capacity estimates for the "Central business district" area type, for which our maximum observation (1780 and 1420) is quite a bit lower than our assumption of 2050 vehicles per hour per lane. Unfortunately we have many fewer stations and observations for the central business district (only 11 in the dataset) than we do the other area types. However, the results do suggest a reduction in the capacity of freeways in this area type is warranted.
@@ -124,7 +139,7 @@ The results of the above steps are shown in [Table 2](#table-2). At first glance
 The other exception is the seemingly more efficient use of roadways during the morning commute relative to the evening commute. As travelers departure times are more consistent in the morning, there seems to be decent theoretical and, per [Table 2](#table-2) empirical, motivation for higher capacity assumptions in the morning commute period relative to the afternoon.      
 
 #### Table 2
-#### Implied Capacity Estimates by Area Type
+*Implied Capacity Estimates by Area Type*
 
 | **Area Type**              | **Implied Capacity during Morning Commute** | **Implied Capacity during Evening Commute** |
 |:---------------------------|---------------------------------------------|---------------------------------------------|
@@ -139,7 +154,7 @@ The other exception is the seemingly more efficient use of roadways during the m
 *Travel Model One* uses a simple look up table to determine the free-flow speed (i.e., the speed at which vehicles travel when there is no congestion) on each roadway segment. Similar to the capacity assumption, the free-flow speed is determined by two variables: facility type and area type. For freeways (again, [one of ten facility types](http://mtcgis.mtc.ca.gov/foswiki/Main/MasterNetworkLookupTables#Facility_type_40FT_41) used by *Travel Model One*), the assumed free-flow speeds are shown in [Table 3](#table-3).
 
 #### Table 3
-#### Assumed Free-flow Speed Estimates by Area Type
+*Assumed Free-flow Speed Estimates by Area Type*
 
 | **Area Type**              | **Assumed Speed (miles per hour)** |
 |:---------------------------|------------------------------------|
@@ -155,15 +170,33 @@ Using the PeMS data, we can ask two interesting questions: (i) is it reasonable 
 To estimate the free-flow speed of the Bay Area residents we are simulating in our travel model, we select the time periods at the beginning of the morning commute and the end of the evening commute, as these times likely include resident travelers and have little congestion. [Figure 8](#figure-8) plots the observed speed of travelers during the hour from four to five a.m. against sensor occupancy (i.e., the percentage of time the loop detector has a vehicle above it), segmented by area type. A companion plot is presented in [Figure 9](#figure-9) for the hour from seven to eight p.m. The vast majority of observations in these plots occure at very low sensor occupancy rates, suggesting -- as hoped -- little congestion.
 
 #### Figure 8
-#### Observed Speed by Area Type from 4 to 5 am
+*Observed Speed by Area Type from 4 to 5 am*
+
+<script type='text/javascript' src='https://public.tableausoftware.com/javascripts/api/viz_v1.js'></script>
+<div style="width: 1000px; height: 900px;"><noscript><a href='#'><img alt=" " src="https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;pe&#47;pems-vdf-fig-01&#47;morningspeedoccup&#47;1_rss.png" style="border: none;" /></a></noscript><object class='tableauViz' width='1000' height='900' style='display:none;'><param name='host_url' value='https%3A%2F%2Fpublic.tableausoftware.com%2F' /> <param name='site_root' value='' /><param name='name' value='pems-vdf-fig-01&#47;morningspeedoccup' /><param name='tabs' value='no' /><param name='toolbar' value='yes' /><param name='static_image' value='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;pe&#47;pems-vdf-fig-01&#47;morningspeedoccup&#47;1_rss.png' /> <param name='animate_transition' value='yes' /><param name='display_static_image' value='yes' /><param name='display_spinner' value='yes' /><param name='display_overlay' value='yes' /><param name='display_count' value='yes' /></object></div> <div style="width: 1000px; height: 22px; padding: 0px 10px 0px 0px; color: black; font: normal 8pt verdana,helvetica,arial,sans-serif;"> <div style="float: right; padding-right: 8px;"><a href='http://www.tableausoftware.com/public/about-tableau-products?ref=https://public.tableau.com/views/pems-vdf-fig-01/morningspeedoccup' target='_blank'>Learn About Tableau</a></div> </div>    
 
 #### Figure 9
-#### Observed Speed by Area Type from 7 to 8 pm
+*Observed Speed by Area Type from 7 to 8 pm*
+
+<script type='text/javascript' src='https://public.tableausoftware.com/javascripts/api/viz_v1.js'></script>
+<div style="width: 1000px; height: 900px;"><noscript><a href='#'><img alt=" " src="https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;pe&#47;pems-vdf-fig-01&#47;eveningspeedoccup&#47;1_rss.png" style="border: none;" /></a></noscript><object class='tableauViz' width='1000' height='900' style='display:none;'><param name='host_url' value='https%3A%2F%2Fpublic.tableausoftware.com%2F' /> <param name='site_root' value='' /><param name='name' value='pems-vdf-fig-01&#47;eveningspeedoccup' /><param name='tabs' value='no' /><param name='toolbar' value='yes' /><param name='static_image' value='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;pe&#47;pems-vdf-fig-01&#47;eveningspeedoccup&#47;1_rss.png' /> <param name='animate_transition' value='yes' /><param name='display_static_image' value='yes' /><param name='display_spinner' value='yes' /><param name='display_overlay' value='yes' /><param name='display_count' value='yes' /></object></div> <div style="width: 1000px; height: 22px; padding: 0px 10px 0px 0px; color: black; font: normal 8pt verdana,helvetica,arial,sans-serif;"> <div style="float: right; padding-right: 8px;"><a href='http://www.tableausoftware.com/public/about-tableau-products?ref=https://public.tableau.com/views/pems-vdf-fig-01/eveningspeedoccup' target='_blank'>Learn About Tableau</a></div> </div>    
 
 Speed statistics are extracting from the data and shown in [Figure 10](#figure-10) and [Figure 11](#figure-11). [Table 4](#table-4) below summarizes the median speeds from the two charts and presents those as the implied free-flow speeds. Note that in the case of trying to estimate the physical capacity, using the maximum makes the most sense as we are trying to gauge how many cars can move through the roadway segment. In the case of free-flow speed, we are trying to understand the typical behavior of the typical driver, which logically points to using the median.
 
+#### Figure 10
+*Speed Characteristics by Area Type (4 to 5 am)*
+
+<script type='text/javascript' src='https://public.tableausoftware.com/javascripts/api/viz_v1.js'></script>
+<div style="width: 1000px; height: 900px;"><noscript><a href='#'><img alt=" " src="https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;pe&#47;pems-vdf-fig-01&#47;morningspeed&#47;1_rss.png" style="border: none;" /></a></noscript><object class='tableauViz' width='1000' height='900' style='display:none;'><param name='host_url' value='https%3A%2F%2Fpublic.tableausoftware.com%2F' /> <param name='site_root' value='' /><param name='name' value='pems-vdf-fig-01&#47;morningspeed' /><param name='tabs' value='no' /><param name='toolbar' value='yes' /><param name='static_image' value='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;pe&#47;pems-vdf-fig-01&#47;morningspeed&#47;1_rss.png' /> <param name='animate_transition' value='yes' /><param name='display_static_image' value='yes' /><param name='display_spinner' value='yes' /><param name='display_overlay' value='yes' /><param name='display_count' value='yes' /></object></div> <div style="width: 1000px; height: 22px; padding: 0px 10px 0px 0px; color: black; font: normal 8pt verdana,helvetica,arial,sans-serif;"> <div style="float: right; padding-right: 8px;"><a href='http://www.tableausoftware.com/public/about-tableau-products?ref=https://public.tableau.com/views/pems-vdf-fig-01/morningspeed' target='_blank'>Learn About Tableau</a></div> </div> 
+
+#### Figure 11
+*Speed Characteristics by Area Type (7 to 8 pm)*
+
+<script type='text/javascript' src='https://public.tableausoftware.com/javascripts/api/viz_v1.js'></script>
+<div style="width: 1000px; height: 900px;"><noscript><a href='#'><img alt=" " src="https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;pe&#47;pems-vdf-fig-01&#47;eveningspeed&#47;1_rss.png" style="border: none;" /></a></noscript><object class='tableauViz' width='1000' height='900' style='display:none;'><param name='host_url' value='https%3A%2F%2Fpublic.tableausoftware.com%2F' /> <param name='site_root' value='' /><param name='name' value='pems-vdf-fig-01&#47;eveningspeed' /><param name='tabs' value='no' /><param name='toolbar' value='yes' /><param name='static_image' value='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;pe&#47;pems-vdf-fig-01&#47;eveningspeed&#47;1_rss.png' /> <param name='animate_transition' value='yes' /><param name='display_static_image' value='yes' /><param name='display_spinner' value='yes' /><param name='display_overlay' value='yes' /><param name='display_count' value='yes' /></object></div> <div style="width: 1000px; height: 22px; padding: 0px 10px 0px 0px; color: black; font: normal 8pt verdana,helvetica,arial,sans-serif;"> <div style="float: right; padding-right: 8px;"><a href='http://www.tableausoftware.com/public/about-tableau-products?ref=https://public.tableau.com/views/pems-vdf-fig-01/eveningspeed' target='_blank'>Learn About Tableau</a></div> </div>   
+
 #### Table 3
-#### Implied Free-flow Speed Estimates by Area Type
+*Implied Free-flow Speed Estimates by Area Type*
 
 | **Area Type**              | **Implied Free-flow speed during Morning Commute** | **Implied Free-flow Speed during Evening Commute** |
 |:---------------------------|----------------------------------------------------|----------------------------------------------------|
@@ -181,24 +214,33 @@ The evidence in [Table 3](#table-3) suggests that segmenting free-flow speed by 
 
 > `congested travel time = free-flow travel time * (1 + alpha * (4/3 * volume/capacity)^beta)`,
 >
-> where, in *Travel Model One*, `alpha` is 0.20 and beta is 6.0.
+> where, in *Travel Model One*, `alpha` is 0.20 and `beta` is 6.0.
 
 To use the BPR curve, we must provide (a) a free-flow speed on each roadway segment; (b) an estimate of effective capacity for each roadway segment; and, (c) determine the parameters `alpha` and `beta`. The previous two sections of this discussed the assumptions we make regarding (a) and (b) and used the PeMS data to assess the reasonableness of those assumptions. Comfortable that our assumptions for free-flow speed and capacity are, while not perfect, reasonable, we can use the estimates of observed flow from the PeMS database as a surrogate for demand and then compute estmates of congested travel time using the BPR curve. The estimated travel time can be converted to speed and compared directly to the observed speeds in the PeMS database. This examination should help us assess the reasonableness of the BPR curves.  
 
 The PeMS database contains estimates of traffic flow (i.e., the number of cars that pass a roadway detector per unit of time). Flow is a revealed expression of an unobserved demand for vehicle travel (i.e., the number of cars that **want to** pass a roadway detector per unit of time). *Travel Model One* estimates demand. The flow on a roadway segment cannot exceed a roadway's effective capacity; the demand can. When examining the PeMS data, we will often observe similar observed flows for roadways operating at dramatically different speeds: low flow when traffic is light and speeds are high and similarly low flow when traffic is heavy and speeds are low. 
 
-The first assessment of the performance of the volume-delay functions plots the observed volume-to-capacity ratio against observed travel speed along with the assumed BPR curves. We use "volume" here to use either observed flow (when plotting the PeMS data) or unobserved demand (when plotting the BPR curves). These charts are shown in [Figure 11](#figure-11) and are segmented by time period. Important notes regarding these plots are as follows:
+The first assessment of the performance of the volume-delay functions plots the observed volume-to-capacity ratio against observed travel speed along with the assumed BPR curves. We use "volume" here to use either observed flow (when plotting the PeMS data) or unobserved demand (when plotting the BPR curves). These charts are shown in [Figure 12](#figure-12) and are segmented by time period. Important notes regarding these plots are as follows:
 
 * We assume a capacity of 2,200 vehicles per hour per lane and a free-flow speed of 67 miles per hour for each of the station.
 * We include points for which the demand exceeds the roadway capacity. In the PeMS data, flow is low, so these points appear close to the origin on the chart (low observed speed, low volume-to-capacity ratio). If we knew the demand, however, these points would appear in the lower right-hand corner of the plot (low observed speed, high demand-to-capacity ratio). We include these points in the chart, but note that "volume" for the PeMS data has a different meaning than "volume" for the BPR curves.
 * The plots generally show the curves fit the data reasonable well. 
 
-#### Figure 11
-#### Observed Speed against Observed Volume-to-Capacity Ratio
+#### Figure 12
+*Observed/Estimated Speed against Observed Volume-to-Capacity Ratio by Time Period*
 
-The second assessment of the performance of the volume-delay functions focuses on the aforementioned problematic cases in which demand exceeds capacity. Here, density, which is the quantity hourly flow divided by speed) is plotted against speed. These plots reveal observed travel speeds when densities exceed the critical threshold at which speeds begin to degrade (which is around 30 vehicles per mile, as shown in [Figure 2](#figure-2) and [Figure 3](#figure-3)). [Figure 12](#figure-12) compares the BPR curves to the observed data by time period. These charts again assume a capacity for each station of 2,200 vehicles per hour per lane.
+<script type='text/javascript' src='https://public.tableausoftware.com/javascripts/api/viz_v1.js'></script>
+<div style="width: 1000px; height: 900px;"><noscript><a href='#'><img alt=" " src="https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;pe&#47;pems-vdf-fig-01&#47;bpmvoverc&#47;1_rss.png" style="border: none;" /></a></noscript><object class='tableauViz' width='1000' height='900' style='display:none;'><param name='host_url' value='https%3A%2F%2Fpublic.tableausoftware.com%2F' /> <param name='site_root' value='' /><param name='name' value='pems-vdf-fig-01&#47;bpmvoverc' /><param name='tabs' value='no' /><param name='toolbar' value='yes' /><param name='static_image' value='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;pe&#47;pems-vdf-fig-01&#47;bpmvoverc&#47;1_rss.png' /> <param name='animate_transition' value='yes' /><param name='display_static_image' value='yes' /><param name='display_spinner' value='yes' /><param name='display_overlay' value='yes' /><param name='display_count' value='yes' /></object></div> <div style="width: 1000px; height: 22px; padding: 0px 10px 0px 0px; color: black; font: normal 8pt verdana,helvetica,arial,sans-serif;"> <div style="float: right; padding-right: 8px;"><a href='http://www.tableausoftware.com/public/about-tableau-products?ref=https://public.tableau.com/views/pems-vdf-fig-01/bpmvoverc' target='_blank'>Learn About Tableau</a></div> </div>   
+
+The second assessment of the performance of the volume-delay functions focuses on the aforementioned problematic cases in which demand exceeds capacity. Here, density, which is the quantity hourly flow divided by speed) is plotted against speed. These plots reveal observed travel speeds when densities exceed the critical threshold at which speeds begin to degrade (which is around 30 vehicles per mile, as shown in [Figure 2](#figure-2) and [Figure 3](#figure-3)). [Figure 13](#figure-12) compares the BPR curves to the observed data by time period. These charts again assume a capacity for each station of 2,200 vehicles per hour per lane.
 
 Each of the commute period plots show the curves perform okay at high densities.
+
+#### Figure 13
+*Observed/Estimated Speed against Density by Time Period*
+
+<script type='text/javascript' src='https://public.tableausoftware.com/javascripts/api/viz_v1.js'></script>
+<div style="width: 1000px; height: 900px;"><noscript><a href='#'><img alt=" " src="https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;pe&#47;pems-vdf-fig-01&#47;bpmdensity&#47;1_rss.png" style="border: none;" /></a></noscript><object class='tableauViz' width='1000' height='900' style='display:none;'><param name='host_url' value='https%3A%2F%2Fpublic.tableausoftware.com%2F' /> <param name='site_root' value='' /><param name='name' value='pems-vdf-fig-01&#47;bpmdensity' /><param name='tabs' value='no' /><param name='toolbar' value='yes' /><param name='static_image' value='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;pe&#47;pems-vdf-fig-01&#47;bpmdensity&#47;1_rss.png' /> <param name='animate_transition' value='yes' /><param name='display_static_image' value='yes' /><param name='display_spinner' value='yes' /><param name='display_overlay' value='yes' /><param name='display_count' value='yes' /></object></div> <div style="width: 1000px; height: 22px; padding: 0px 10px 0px 0px; color: black; font: normal 8pt verdana,helvetica,arial,sans-serif;"> <div style="float: right; padding-right: 8px;"><a href='http://www.tableausoftware.com/public/about-tableau-products?ref=https://public.tableau.com/views/pems-vdf-fig-01/bpmdensity' target='_blank'>Learn About Tableau</a></div> </div>   
 
 ## Conclusion
 In sum, this investigation demonstrates that MTC's *Travel Model One* deploys reasonable procedures for translating vehicle demand to roadway speeds. 
