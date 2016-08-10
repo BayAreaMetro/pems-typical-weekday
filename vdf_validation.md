@@ -3,6 +3,8 @@ layout: page
 title: Volume Delay Function Validation
 ---
 
+# **WORKING DRAFT**
+
 # Volume Delay Function Validation
 Travel models attempt to iteratively predict the demand for automobile travel and the resulting travel speed on roadway segments.  The estimation of travel demand is complex and, for MTC, described in detail [here](http://analytics.mtc.ca.gov/foswiki/Main/Development).  The estimation of travel speed is fairly straightforward and uses so-called "volume delay functions", which estimate congested travel speed as a function of each roadway's demand, free-flow speed, and effective capacity.  During MTC's *Travel Model One* development efforts, our legacy volume delay functions were retained.
 
