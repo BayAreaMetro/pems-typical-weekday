@@ -26,11 +26,11 @@ library(timeDate)
 library(chron)
 
 ### Command-line argument
-args <- commandArgs(trailingOnly = TRUE)
-YEAR_STRING = args[1]
+# args <- commandArgs(trailingOnly = TRUE)
+# YEAR_STRING = args[1]
 
 ### Remote file names
-#YEAR_STRING = "2015"
+YEAR_STRING = "2016"
 F_DATA_MAR = paste("M:/Data/Traffic/PeMS/",YEAR_STRING,"/d04_text_station_hour_",YEAR_STRING,"_03.txt", sep = "")
 F_DATA_APR = paste("M:/Data/Traffic/PeMS/",YEAR_STRING,"/d04_text_station_hour_",YEAR_STRING,"_04.txt", sep = "")
 F_DATA_MAY = paste("M:/Data/Traffic/PeMS/",YEAR_STRING,"/d04_text_station_hour_",YEAR_STRING,"_05.txt", sep = "")
