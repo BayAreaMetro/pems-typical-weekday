@@ -232,10 +232,11 @@ data_sum_period <- data_sum_period %>%
 
 # Join the meta-data
 data_meta <- data_meta %>%
-  select(station = ID, state_pm = State_PM, abs_pm = Abs_PM, latitude = Latitude, longitude = Longitude)
+  select(station = ID, district = District, route = Fwy, direction = Dir, type = Type,
+         state_pm = State_PM, abs_pm = Abs_PM, latitude = Latitude, longitude = Longitude)
 
-data_sum_hour_write   <- left_join(data_sum_hour, data_meta,   by = c("station"))
-data_sum_period_write <- left_join(data_sum_period, data_meta, by = c("station"))
+data_sum_hour_write   <- left_join(data_sum_hour, data_meta,   by = c("station","district","route","direction","type"))
+data_sum_period_write <- left_join(data_sum_period, data_meta, by = c("station","district","route","direction","type"))
 
 data_sum_hour_write <- data_sum_hour_write %>%
   mutate(year = as.numeric(YEAR_STRING))
