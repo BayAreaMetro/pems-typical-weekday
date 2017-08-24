@@ -11,6 +11,8 @@
 # 1. 
 # 
 
+library(dplyr)
+
 ## Parameters
 
 ### Relevant year strings
@@ -24,11 +26,21 @@ input_file_third = "/pems"
 input_file_sixth = ".Rdata"
 
 ### Output file names
-F_OUTPUT_HOUR_R   = "~/../Box Sync/Share Data/pems-typical-weekday/pems_hour.Rdata"
-F_OUTPUT_HOUR_CSV = "~/../Box Sync/Share Data/pems-typical-weekday/pems_hour.csv"
+# F_OUTPUT_HOUR_R     <- file.path(normalizePath("~"),"Box","Share Data","pems-typical-weekday","pems_hour.Rdata", fsep="\\")
+# F_OUTPUT_HOUR_CSV   <- file.path(normalizePath("~"),"Box","Share Data","pems-typical-weekday","pems_hour.csv",   fsep="\\")
 
-F_OUTPUT_PERIOD_R   = "~/../Box Sync/Share Data/pems-typical-weekday/pems_period.Rdata"
-F_OUTPUT_PERIOD_CSV = "~/../Box Sync/Share Data/pems-typical-weekday/pems_period.csv"
+# F_OUTPUT_PERIOD_R   <- file.path(normalizePath("~"),"Box","Share Data","pems-typical-weekday","pems_period.Rdata",fsep="\\")
+# F_OUTPUT_PERIOD_CSV <- file.path(normalizePath("~"),"Box","Share Data","pems-typical-weekday","pems_period.csv",  fsep="\\")
+
+# for now, output to local dir since the Box Drive is not working in this context
+# Error message:
+#      cannot open compressed file 'C:\Users\lzorn\Documents\Box\Share Data\pems-typical-weekday\pems_hour.Rdata', 
+#      probable reason 'No such file or directory'
+F_OUTPUT_HOUR_R     <- "pems_hour.Rdata"
+F_OUTPUT_HOUR_CSV   <- "pems_hour.csv"
+F_OUTPUT_PERIOD_R   <- "pems_period.Rdata"
+F_OUTPUT_PERIOD_CSV <- "pems_period.csv"
+
 
 ## Hour reads and binds
 time_period = "_hour_"
@@ -55,7 +67,10 @@ for(year in year_array){
 }
 
 save(hour_all, file = F_OUTPUT_HOUR_R)
+print(paste("Wrote file ", F_OUTPUT_HOUR_R))
+
 write.csv(hour_all, file = F_OUTPUT_HOUR_CSV, row.names = FALSE, quote = F) # SQL server does not like quotes
+print(paste("Wrote file ", F_OUTPUT_HOUR_CSV))
 
 ## Period reads and binds
 time_period = "_period_"
@@ -81,5 +96,8 @@ for(year in year_array){
 }
 
 save(period_all, file = F_OUTPUT_PERIOD_R)
+print(paste("Wrote file ", F_OUTPUT_PERIOD_R))
+
 write.csv(period_all, file = F_OUTPUT_PERIOD_CSV, row.names = FALSE, quote = F) # SQL server does not like quotes
+print(paste("Wrote file ", F_OUTPUT_PERIOD_CSV))
 
