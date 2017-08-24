@@ -26,11 +26,11 @@ library(timeDate)
 library(chron)
 
 ### Command-line argument
-# args <- commandArgs(trailingOnly = TRUE)
-# YEAR_STRING = args[1]
+args <- commandArgs(trailingOnly = TRUE)
+YEAR_STRING = args[1]
 
 ### Remote file names
-YEAR_STRING = "2016"
+# YEAR_STRING = "2016"
 F_DATA_MAR = paste("M:/Data/Traffic/PeMS/",YEAR_STRING,"/d04_text_station_hour_",YEAR_STRING,"_03.txt", sep = "")
 F_DATA_APR = paste("M:/Data/Traffic/PeMS/",YEAR_STRING,"/d04_text_station_hour_",YEAR_STRING,"_04.txt", sep = "")
 F_DATA_MAY = paste("M:/Data/Traffic/PeMS/",YEAR_STRING,"/d04_text_station_hour_",YEAR_STRING,"_05.txt", sep = "")
@@ -39,7 +39,13 @@ F_DATA_OCT = paste("M:/Data/Traffic/PeMS/",YEAR_STRING,"/d04_text_station_hour_"
 F_DATA_NOV = paste("M:/Data/Traffic/PeMS/",YEAR_STRING,"/d04_text_station_hour_",YEAR_STRING,"_11.txt", sep = "")
 
 # Representative data file for lats, longs, and post-miles
-F_META  = paste("M:/Data/Traffic/PeMS/",YEAR_STRING,"/d04_text_meta_",YEAR_STRING,".txt", sep = "")
+# The file name varies -- figure out what it is
+meta_files <- list.files(path=file.path("M:/Data/Traffic/PeMS", YEAR_STRING),
+                         pattern=paste0("d04_text_meta_",YEAR_STRING))
+stopifnot(length(meta_files) > 0)
+
+F_META     <- file.path("M:/Data/Traffic/PeMS", YEAR_STRING, meta_files[1])
+print(paste0("Reading meta file [", F_META, "]"))
 
 F_OUTPUT_HOUR_R   = paste("M:/Data/Traffic/PeMS/",YEAR_STRING,"/pems_hour_",YEAR_STRING,".Rdata", sep = "")
 F_OUTPUT_PERIOD_R = paste("M:/Data/Traffic/PeMS/",YEAR_STRING,"/pems_period_",YEAR_STRING,".Rdata", sep = "")
