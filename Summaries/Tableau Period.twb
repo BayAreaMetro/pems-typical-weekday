@@ -42,6 +42,7 @@
             <column datatype='integer' name='year' ordinal='21' />
           </columns>
         </relation>
+        <refresh increment-key='' incremental-updates='false' />
         <metadata-records>
           <metadata-record class='column'>
             <remote-name>station</remote-name>
@@ -479,15 +480,15 @@
           <groupfilter function='level-members' level='[station]' />
         </groupfilter>
       </group>
-      <extract count='-1' enabled='false' units='records'>
-        <connection class='dataengine' dbname='C:/Users/dory/AppData/Local/Temp/TableauTemp/1gkj29v1i3dqmm1488qwb0ehz8m0.tde' schema='Extract' tablename='Extract' update-time='12/07/2016 04:56:32 PM' updated-database='M:\Data\Traffic\PeMS\pems_period.tde'>
+      <extract count='-1' enabled='true' units='records'>
+        <connection class='dataengine' dbname='C:/Users/lzorn/Documents/pems-typical-weekday/Summaries/pems_period.tde' schema='Extract' tablename='Extract' update-time='11/09/2017 06:22:14 PM'>
           <relation name='Extract' table='[Extract].[Extract]' type='table' />
           <calculations>
             <calculation column='[Calculation_6141231132459864]' formula='DATE(&quot;1/1/&quot;+str([year]))' />
             <calculation column='[Number of Records]' formula='1' />
           </calculations>
-          <refresh>
-            <refresh-event add-from-file-path='' increment-value='%null%' refresh-type='create' rows-inserted='72400' timestamp-start='2016-12-07 16:56:32.619' />
+          <refresh increment-key='' incremental-updates='false'>
+            <refresh-event add-from-file-path='' increment-value='%null%' refresh-type='create' rows-inserted='72335' timestamp-start='2017-11-09 18:22:14.441' />
           </refresh>
           <metadata-records>
             <metadata-record class='column'>
@@ -504,7 +505,7 @@
               <statistics>
                 <statistic aggregation='Min' datatype='date'>#2005-01-01#</statistic>
                 <statistic aggregation='Max' datatype='date'>#2016-01-01#</statistic>
-                <statistic aggregation='Count' datatype='integer'>72400</statistic>
+                <statistic aggregation='Count' datatype='integer'>72335</statistic>
                 <statistic aggregation='Median' datatype='date'>#2012-01-01#</statistic>
               </statistics>
               <attributes>
@@ -533,7 +534,7 @@
               <statistics>
                 <statistic aggregation='Min' datatype='integer'>1</statistic>
                 <statistic aggregation='Max' datatype='integer'>1</statistic>
-                <statistic aggregation='Count' datatype='integer'>72400</statistic>
+                <statistic aggregation='Count' datatype='integer'>72335</statistic>
                 <statistic aggregation='Median' datatype='integer'>1</statistic>
               </statistics>
               <attributes>
@@ -552,12 +553,12 @@
               <family>pems_period#csv</family>
               <local-type>real</local-type>
               <aggregation>Sum</aggregation>
-              <approx-count>2916</approx-count>
+              <approx-count>2852</approx-count>
               <contains-null>true</contains-null>
               <statistics>
                 <statistic aggregation='Min' datatype='real'>0.029999999999999999</statistic>
                 <statistic aggregation='Max' datatype='real'>524.12900000000002</statistic>
-                <statistic aggregation='Count' datatype='integer'>60058</statistic>
+                <statistic aggregation='Count' datatype='integer'>62830</statistic>
               </statistics>
               <attributes>
                 <attribute datatype='boolean' name='DebugRemoteMetadata (comparable)'>true</attribute>
@@ -580,19 +581,19 @@
               <family>pems_period#csv</family>
               <local-type>real</local-type>
               <aggregation>Sum</aggregation>
-              <approx-count>72209</approx-count>
+              <approx-count>72147</approx-count>
               <contains-null>false</contains-null>
               <statistics>
-                <statistic aggregation='Sum' datatype='real'>897862430.17641866</statistic>
-                <statistic aggregation='Avg' datatype='real'>12401.414781442247</statistic>
+                <statistic aggregation='Sum' datatype='real'>896999730.38360119</statistic>
+                <statistic aggregation='Avg' datatype='real'>12400.632202717927</statistic>
                 <statistic aggregation='Min' datatype='real'>0.0</statistic>
                 <statistic aggregation='Max' datatype='real'>47788.150000000001</statistic>
-                <statistic aggregation='Stdev' datatype='real'>9275.632582299022</statistic>
-                <statistic aggregation='StdevP' datatype='real'>9275.5685238417591</statistic>
-                <statistic aggregation='Var' datatype='real'>86037359.801807225</statistic>
-                <statistic aggregation='VarP' datatype='real'>86036171.440483987</statistic>
-                <statistic aggregation='Count' datatype='integer'>72400</statistic>
-                <statistic aggregation='SumXSqr' datatype='real'>17363783225582.537</statistic>
+                <statistic aggregation='Stdev' datatype='real'>9276.1650010403009</statistic>
+                <statistic aggregation='StdevP' datatype='real'>9276.100881339873</statistic>
+                <statistic aggregation='Var' datatype='real'>86047237.126525015</statistic>
+                <statistic aggregation='VarP' datatype='real'>86046047.560794368</statistic>
+                <statistic aggregation='Count' datatype='integer'>72335</statistic>
+                <statistic aggregation='SumXSqr' datatype='real'>17347504592734.242</statistic>
               </statistics>
               <attributes>
                 <attribute datatype='integer' name='DebugRemoteMetadata (size)'>8</attribute>
@@ -609,19 +610,19 @@
               <family>pems_period#csv</family>
               <local-type>real</local-type>
               <aggregation>Sum</aggregation>
-              <approx-count>72397</approx-count>
+              <approx-count>72332</approx-count>
               <contains-null>false</contains-null>
               <statistics>
-                <statistic aggregation='Sum' datatype='real'>4743.4494889457683</statistic>
-                <statistic aggregation='Avg' datatype='real'>0.065517258134610054</statistic>
+                <statistic aggregation='Sum' datatype='real'>4735.8209530421482</statistic>
+                <statistic aggregation='Avg' datatype='real'>0.065470670533519709</statistic>
                 <statistic aggregation='Min' datatype='real'>0.0</statistic>
                 <statistic aggregation='Max' datatype='real'>0.85668863660539096</statistic>
-                <statistic aggregation='Stdev' datatype='real'>0.056377787858206907</statistic>
-                <statistic aggregation='StdevP' datatype='real'>0.056377398507498795</statistic>
-                <statistic aggregation='Var' datatype='real'>0.0031784549637849818</statistic>
-                <statistic aggregation='VarP' datatype='real'>0.0031784110624733272</statistic>
-                <statistic aggregation='Count' datatype='integer'>72400</statistic>
-                <statistic aggregation='SumXSqr' datatype='real'>540.89476553881298</statistic>
+                <statistic aggregation='Stdev' datatype='real'>0.056339939534883698</statistic>
+                <statistic aggregation='StdevP' datatype='real'>0.056339550095924312</statistic>
+                <statistic aggregation='Var' datatype='real'>0.0031741887867943516</statistic>
+                <statistic aggregation='VarP' datatype='real'>0.0031741449050111652</statistic>
+                <statistic aggregation='Count' datatype='integer'>72335</statistic>
+                <statistic aggregation='SumXSqr' datatype='real'>539.65914502634439</statistic>
               </statistics>
               <attributes>
                 <attribute datatype='integer' name='DebugRemoteMetadata (size)'>8</attribute>
@@ -638,19 +639,19 @@
               <family>pems_period#csv</family>
               <local-type>real</local-type>
               <aggregation>Sum</aggregation>
-              <approx-count>61996</approx-count>
+              <approx-count>61921</approx-count>
               <contains-null>true</contains-null>
               <statistics>
-                <statistic aggregation='Sum' datatype='real'>3856463.6442974284</statistic>
-                <statistic aggregation='Avg' datatype='real'>62.204036393654988</statistic>
-                <statistic aggregation='Min' datatype='real'>6.5363709717516398</statistic>
-                <statistic aggregation='Max' datatype='real'>82.3727261151909</statistic>
-                <statistic aggregation='Stdev' datatype='real'>8.5525639593598495</statistic>
-                <statistic aggregation='StdevP' datatype='real'>8.5524949834541797</statistic>
-                <statistic aggregation='Var' datatype='real'>73.146350278941014</statistic>
-                <statistic aggregation='VarP' datatype='real'>73.145170442008919</statistic>
-                <statistic aggregation='Count' datatype='integer'>61997</statistic>
-                <statistic aggregation='SumXSqr' datatype='real'>244422386.01257783</statistic>
+                <statistic aggregation='Sum' datatype='real'>3858698.7588070966</statistic>
+                <statistic aggregation='Avg' datatype='real'>62.315473641146873</statistic>
+                <statistic aggregation='Min' datatype='real'>8.1074755882884304</statistic>
+                <statistic aggregation='Max' datatype='real'>81.600892362782403</statistic>
+                <statistic aggregation='Stdev' datatype='real'>8.2912251279295699</statistic>
+                <statistic aggregation='StdevP' datatype='real'>8.291158178714408</statistic>
+                <statistic aggregation='Var' datatype='real'>68.744414122010724</statistic>
+                <statistic aggregation='VarP' datatype='real'>68.743303944462809</statistic>
+                <statistic aggregation='Count' datatype='integer'>61922</statistic>
+                <statistic aggregation='SumXSqr' datatype='real'>244713363.66041881</statistic>
               </statistics>
               <attributes>
                 <attribute datatype='integer' name='DebugRemoteMetadata (size)'>8</attribute>
@@ -667,22 +668,24 @@
               <family>pems_period#csv</family>
               <local-type>integer</local-type>
               <aggregation>Sum</aggregation>
-              <approx-count>63</approx-count>
+              <approx-count>62</approx-count>
               <contains-null>false</contains-null>
               <statistics>
-                <statistic aggregation='Sum' datatype='real'>3794442.0</statistic>
-                <statistic aggregation='Avg' datatype='real'>52.409419889502765</statistic>
+                <statistic aggregation='Sum' datatype='real'>3750300.0</statistic>
+                <statistic aggregation='Avg' datatype='real'>51.846270823252922</statistic>
                 <statistic aggregation='Min' datatype='integer'>16</statistic>
-                <statistic aggregation='Max' datatype='integer'>78</statistic>
-                <statistic aggregation='Stdev' datatype='real'>17.009337415027922</statistic>
-                <statistic aggregation='StdevP' datatype='real'>17.009219946822469</statistic>
-                <statistic aggregation='Var' datatype='real'>289.31755929826875</statistic>
-                <statistic aggregation='VarP' datatype='real'>289.3135631993834</statistic>
-                <statistic aggregation='Count' datatype='integer'>72400</statistic>
-                <statistic aggregation='SumXSqr' datatype='real'>219810806.0</statistic>
+                <statistic aggregation='Max' datatype='integer'>77</statistic>
+                <statistic aggregation='Stdev' datatype='real'>16.628399529399019</statistic>
+                <statistic aggregation='StdevP' datatype='real'>16.628284588796269</statistic>
+                <statistic aggregation='Var' datatype='real'>276.50367090931752</statistic>
+                <statistic aggregation='VarP' datatype='real'>276.49984836599947</statistic>
+                <statistic aggregation='Count' datatype='integer'>72335</statistic>
+                <statistic aggregation='SumXSqr' datatype='real'>214439686.0</statistic>
               </statistics>
               <attributes>
                 <attribute datatype='integer' name='DebugRemoteMetadata (size)'>1</attribute>
+                <attribute datatype='integer' name='DebugRemoteMetadata (sort-position)'>12</attribute>
+                <attribute datatype='string' name='DebugRemoteMetadata (sort-sense)'>&quot;asc&quot;</attribute>
                 <attribute datatype='string' name='DebugRemoteType'>&quot;sint8&quot;</attribute>
               </attributes>
             </metadata-record>
@@ -704,7 +707,7 @@
               <statistics>
                 <statistic aggregation='Min' datatype='string'>&quot;E&quot;</statistic>
                 <statistic aggregation='Max' datatype='string'>&quot;W&quot;</statistic>
-                <statistic aggregation='Count' datatype='integer'>72400</statistic>
+                <statistic aggregation='Count' datatype='integer'>72335</statistic>
               </statistics>
               <attributes>
                 <attribute datatype='string' name='DebugRemoteCollation'>&quot;en_US&quot;</attribute>
@@ -733,7 +736,7 @@
               <statistics>
                 <statistic aggregation='Min' datatype='integer'>4</statistic>
                 <statistic aggregation='Max' datatype='integer'>4</statistic>
-                <statistic aggregation='Count' datatype='integer'>72400</statistic>
+                <statistic aggregation='Count' datatype='integer'>72335</statistic>
                 <statistic aggregation='Median' datatype='integer'>4</statistic>
               </statistics>
               <attributes>
@@ -757,7 +760,7 @@
               <statistics>
                 <statistic aggregation='Min' datatype='integer'>1</statistic>
                 <statistic aggregation='Max' datatype='integer'>8</statistic>
-                <statistic aggregation='Count' datatype='integer'>72400</statistic>
+                <statistic aggregation='Count' datatype='integer'>72335</statistic>
               </statistics>
               <attributes>
                 <attribute datatype='integer' name='DebugRemoteMetadata (size)'>1</attribute>
@@ -776,18 +779,20 @@
               <family>pems_period#csv</family>
               <local-type>real</local-type>
               <aggregation>Sum</aggregation>
-              <approx-count>3754</approx-count>
+              <approx-count>3197</approx-count>
               <contains-null>true</contains-null>
               <statistics>
                 <statistic aggregation='Min' datatype='real'>36.919370000000001</statistic>
                 <statistic aggregation='Max' datatype='real'>38.849907000000002</statistic>
-                <statistic aggregation='Count' datatype='integer'>59856</statistic>
+                <statistic aggregation='Count' datatype='integer'>62532</statistic>
               </statistics>
               <attributes>
                 <attribute datatype='boolean' name='DebugRemoteMetadata (comparable)'>true</attribute>
                 <attribute datatype='string' name='DebugRemoteMetadata (compression)'>&quot;array&quot;</attribute>
                 <attribute datatype='boolean' name='DebugRemoteMetadata (distinct)'>true</attribute>
                 <attribute datatype='integer' name='DebugRemoteMetadata (size)'>8</attribute>
+                <attribute datatype='integer' name='DebugRemoteMetadata (sort-position)'>9</attribute>
+                <attribute datatype='string' name='DebugRemoteMetadata (sort-sense)'>&quot;asc&quot;</attribute>
                 <attribute datatype='integer' name='DebugRemoteMetadata (storagewidth)'>2</attribute>
                 <attribute datatype='string' name='DebugRemoteType'>&quot;double&quot;</attribute>
               </attributes>
@@ -802,12 +807,12 @@
               <family>pems_period#csv</family>
               <local-type>real</local-type>
               <aggregation>Sum</aggregation>
-              <approx-count>3750</approx-count>
+              <approx-count>3202</approx-count>
               <contains-null>true</contains-null>
               <statistics>
                 <statistic aggregation='Min' datatype='real'>-123.029949</statistic>
                 <statistic aggregation='Max' datatype='real'>-121.381198</statistic>
-                <statistic aggregation='Count' datatype='integer'>59856</statistic>
+                <statistic aggregation='Count' datatype='integer'>62532</statistic>
               </statistics>
               <attributes>
                 <attribute datatype='boolean' name='DebugRemoteMetadata (comparable)'>true</attribute>
@@ -830,12 +835,12 @@
               <family>pems_period#csv</family>
               <local-type>integer</local-type>
               <aggregation>Sum</aggregation>
-              <approx-count>25822</approx-count>
+              <approx-count>24851</approx-count>
               <contains-null>true</contains-null>
               <statistics>
                 <statistic aggregation='Min' datatype='integer'>0</statistic>
                 <statistic aggregation='Max' datatype='integer'>44289</statistic>
-                <statistic aggregation='Count' datatype='integer'>58701</statistic>
+                <statistic aggregation='Count' datatype='integer'>54070</statistic>
               </statistics>
               <attributes>
                 <attribute datatype='boolean' name='DebugRemoteMetadata (comparable)'>true</attribute>
@@ -856,19 +861,19 @@
               <family>pems_period#csv</family>
               <local-type>real</local-type>
               <aggregation>Sum</aggregation>
-              <approx-count>72323</approx-count>
+              <approx-count>72258</approx-count>
               <contains-null>false</contains-null>
               <statistics>
-                <statistic aggregation='Sum' datatype='real'>4675.0334644845188</statistic>
-                <statistic aggregation='Avg' datatype='real'>0.064572285421056891</statistic>
+                <statistic aggregation='Sum' datatype='real'>4668.5119168502069</statistic>
+                <statistic aggregation='Avg' datatype='real'>0.064540152303175599</statistic>
                 <statistic aggregation='Min' datatype='real'>0.0</statistic>
                 <statistic aggregation='Max' datatype='real'>0.95615822568193498</statistic>
-                <statistic aggregation='Stdev' datatype='real'>0.058623650038410198</statistic>
-                <statistic aggregation='StdevP' datatype='real'>0.058623245177550597</statistic>
-                <statistic aggregation='Var' datatype='real'>0.0034367323438259921</statistic>
-                <statistic aggregation='VarP' datatype='real'>0.0034366848751472097</statistic>
-                <statistic aggregation='Count' datatype='integer'>72400</statistic>
-                <statistic aggregation='SumXSqr' datatype='real'>550.6935801823447</statistic>
+                <statistic aggregation='Stdev' datatype='real'>0.058586631717506894</statistic>
+                <statistic aggregation='StdevP' datatype='real'>0.058586226748721361</statistic>
+                <statistic aggregation='Var' datatype='real'>0.0034323934160027845</statistic>
+                <statistic aggregation='VarP' datatype='real'>0.0034323459646525942</statistic>
+                <statistic aggregation='Count' datatype='integer'>72335</statistic>
+                <statistic aggregation='SumXSqr' datatype='real'>549.58521549584805</statistic>
               </statistics>
               <attributes>
                 <attribute datatype='integer' name='DebugRemoteMetadata (size)'>8</attribute>
@@ -885,19 +890,19 @@
               <family>pems_period#csv</family>
               <local-type>real</local-type>
               <aggregation>Sum</aggregation>
-              <approx-count>61990</approx-count>
+              <approx-count>61911</approx-count>
               <contains-null>true</contains-null>
               <statistics>
-                <statistic aggregation='Sum' datatype='real'>3874057.350852754</statistic>
-                <statistic aggregation='Avg' datatype='real'>62.487819585669534</statistic>
+                <statistic aggregation='Sum' datatype='real'>3876717.160350089</statistic>
+                <statistic aggregation='Avg' datatype='real'>62.606459099352236</statistic>
                 <statistic aggregation='Min' datatype='real'>4.4247992869188497</statistic>
-                <statistic aggregation='Max' datatype='real'>82.3915553147948</statistic>
-                <statistic aggregation='Stdev' datatype='real'>8.812416266752221</statistic>
-                <statistic aggregation='StdevP' datatype='real'>8.8123451951535738</statistic>
-                <statistic aggregation='Var' datatype='real'>77.658680458519157</statistic>
-                <statistic aggregation='VarP' datatype='real'>77.657427838546283</statistic>
-                <statistic aggregation='Count' datatype='integer'>61997</statistic>
-                <statistic aggregation='SumXSqr' datatype='real'>246895924.3583301</statistic>
+                <statistic aggregation='Max' datatype='real'>82.298460831301696</statistic>
+                <statistic aggregation='Stdev' datatype='real'>8.59153693826158</statistic>
+                <statistic aggregation='StdevP' datatype='real'>8.591467564116483</statistic>
+                <statistic aggregation='Var' datatype='real'>73.814506961513175</statistic>
+                <statistic aggregation='VarP' datatype='real'>73.813314905265614</statistic>
+                <statistic aggregation='Count' datatype='integer'>61922</statistic>
+                <statistic aggregation='SumXSqr' datatype='real'>247278202.42477864</statistic>
               </statistics>
               <attributes>
                 <attribute datatype='integer' name='DebugRemoteMetadata (size)'>8</attribute>
@@ -919,7 +924,7 @@
               <statistics>
                 <statistic aggregation='Min' datatype='integer'>1</statistic>
                 <statistic aggregation='Max' datatype='integer'>980</statistic>
-                <statistic aggregation='Count' datatype='integer'>72400</statistic>
+                <statistic aggregation='Count' datatype='integer'>72335</statistic>
               </statistics>
               <attributes>
                 <attribute datatype='boolean' name='DebugRemoteMetadata (comparable)'>true</attribute>
@@ -942,19 +947,19 @@
               <family>pems_period#csv</family>
               <local-type>real</local-type>
               <aggregation>Sum</aggregation>
-              <approx-count>72398</approx-count>
+              <approx-count>72332</approx-count>
               <contains-null>false</contains-null>
               <statistics>
-                <statistic aggregation='Sum' datatype='real'>56840116.607680947</statistic>
-                <statistic aggregation='Avg' datatype='real'>785.08448353150482</statistic>
+                <statistic aggregation='Sum' datatype='real'>56693020.594139621</statistic>
+                <statistic aggregation='Avg' datatype='real'>783.75641935632291</statistic>
                 <statistic aggregation='Min' datatype='real'>0.0</statistic>
                 <statistic aggregation='Max' datatype='real'>15128.003289398799</statistic>
-                <statistic aggregation='Stdev' datatype='real'>771.30389229122693</statistic>
-                <statistic aggregation='StdevP' datatype='real'>771.29856558849451</statistic>
-                <statistic aggregation='Var' datatype='real'>594909.69426359667</statistic>
-                <statistic aggregation='VarP' datatype='real'>594901.47727886925</statistic>
-                <statistic aggregation='Count' datatype='integer'>72400</statistic>
-                <statistic aggregation='SumXSqr' datatype='real'>87695160545.801834</statistic>
+                <statistic aggregation='Stdev' datatype='real'>766.90386203750927</statistic>
+                <statistic aggregation='StdevP' datatype='real'>766.89856096256233</statistic>
+                <statistic aggregation='Var' datatype='real'>588141.53360804706</statistic>
+                <statistic aggregation='VarP' datatype='real'>588133.40280644887</statistic>
+                <statistic aggregation='Count' datatype='integer'>72335</statistic>
+                <statistic aggregation='SumXSqr' datatype='real'>86976148515.361618</statistic>
               </statistics>
               <attributes>
                 <attribute datatype='integer' name='DebugRemoteMetadata (size)'>8</attribute>
@@ -971,19 +976,19 @@
               <family>pems_period#csv</family>
               <local-type>real</local-type>
               <aggregation>Sum</aggregation>
-              <approx-count>72397</approx-count>
+              <approx-count>72332</approx-count>
               <contains-null>false</contains-null>
               <statistics>
-                <statistic aggregation='Sum' datatype='real'>819.96237534753436</statistic>
-                <statistic aggregation='Avg' datatype='real'>0.011325447173308486</statistic>
+                <statistic aggregation='Sum' datatype='real'>813.56505681616693</statistic>
+                <statistic aggregation='Avg' datatype='real'>0.011247184030084564</statistic>
                 <statistic aggregation='Min' datatype='real'>0.0</statistic>
                 <statistic aggregation='Max' datatype='real'>0.36109529362020198</statistic>
-                <statistic aggregation='Stdev' datatype='real'>0.020622235403132932</statistic>
-                <statistic aggregation='StdevP' datatype='real'>0.020622092983888368</statistic>
-                <statistic aggregation='Var' datatype='real'>0.00042527659302222934</statistic>
-                <statistic aggregation='VarP' datatype='real'>0.00042527071903613787</statistic>
-                <statistic aggregation='Count' datatype='integer'>72400</statistic>
-                <statistic aggregation='SumXSqr' datatype='real'>40.076040624315425</statistic>
+                <statistic aggregation='Stdev' datatype='real'>0.020512563860111205</statistic>
+                <statistic aggregation='StdevP' datatype='real'>0.020512422070972099</statistic>
+                <statistic aggregation='Var' datatype='real'>0.00042076527611514038</statistic>
+                <statistic aggregation='VarP' datatype='real'>0.00042075945921770324</statistic>
+                <statistic aggregation='Count' datatype='integer'>72335</statistic>
+                <statistic aggregation='SumXSqr' datatype='real'>39.585951396970195</statistic>
               </statistics>
               <attributes>
                 <attribute datatype='integer' name='DebugRemoteMetadata (size)'>8</attribute>
@@ -1000,19 +1005,19 @@
               <family>pems_period#csv</family>
               <local-type>real</local-type>
               <aggregation>Sum</aggregation>
-              <approx-count>61996</approx-count>
+              <approx-count>61921</approx-count>
               <contains-null>true</contains-null>
               <statistics>
-                <statistic aggregation='Sum' datatype='real'>194073.75743828254</statistic>
-                <statistic aggregation='Avg' datatype='real'>3.1303733638447433</statistic>
+                <statistic aggregation='Sum' datatype='real'>179925.70919385209</statistic>
+                <statistic aggregation='Avg' datatype='real'>2.9056831044516018</statistic>
                 <statistic aggregation='Min' datatype='real'>0.0</statistic>
-                <statistic aggregation='Max' datatype='real'>29.113116559413999</statistic>
-                <statistic aggregation='Stdev' datatype='real'>2.7519321523737195</statistic>
-                <statistic aggregation='StdevP' datatype='real'>2.7519099582090867</statistic>
-                <statistic aggregation='Var' datatype='real'>7.5731305712682531</statistic>
-                <statistic aggregation='VarP' datatype='real'>7.5730084180903372</statistic>
-                <statistic aggregation='Count' datatype='integer'>61997</statistic>
-                <statistic aggregation='SumXSqr' datatype='real'>1077027.1238024118</statistic>
+                <statistic aggregation='Max' datatype='real'>24.019503631840301</statistic>
+                <statistic aggregation='Stdev' datatype='real'>2.6794311563997781</statistic>
+                <statistic aggregation='StdevP' datatype='real'>2.6794095207777517</statistic>
+                <statistic aggregation='Var' datatype='real'>7.1793513218858518</statistic>
+                <statistic aggregation='VarP' datatype='real'>7.1792353800344602</statistic>
+                <statistic aggregation='Count' datatype='integer'>61922</statistic>
+                <statistic aggregation='SumXSqr' datatype='real'>967359.70646354207</statistic>
               </statistics>
               <attributes>
                 <attribute datatype='integer' name='DebugRemoteMetadata (size)'>8</attribute>
@@ -1029,12 +1034,12 @@
               <family>pems_period#csv</family>
               <local-type>real</local-type>
               <aggregation>Sum</aggregation>
-              <approx-count>2670</approx-count>
+              <approx-count>2534</approx-count>
               <contains-null>true</contains-null>
               <statistics>
                 <statistic aggregation='Min' datatype='real'>0.029999999999999999</statistic>
                 <statistic aggregation='Max' datatype='real'>1810.0</statistic>
-                <statistic aggregation='Count' datatype='integer'>60058</statistic>
+                <statistic aggregation='Count' datatype='integer'>62830</statistic>
               </statistics>
               <attributes>
                 <attribute datatype='boolean' name='DebugRemoteMetadata (comparable)'>true</attribute>
@@ -1057,19 +1062,19 @@
               <family>pems_period#csv</family>
               <local-type>integer</local-type>
               <aggregation>Sum</aggregation>
-              <approx-count>3489</approx-count>
+              <approx-count>3487</approx-count>
               <contains-null>false</contains-null>
               <statistics>
                 <statistic aggregation='Min' datatype='integer'>400000</statistic>
                 <statistic aggregation='Max' datatype='integer'>414311</statistic>
-                <statistic aggregation='Count' datatype='integer'>72400</statistic>
+                <statistic aggregation='Count' datatype='integer'>72335</statistic>
               </statistics>
               <attributes>
                 <attribute datatype='boolean' name='DebugRemoteMetadata (comparable)'>true</attribute>
                 <attribute datatype='string' name='DebugRemoteMetadata (compression)'>&quot;array&quot;</attribute>
                 <attribute datatype='boolean' name='DebugRemoteMetadata (distinct)'>true</attribute>
                 <attribute datatype='integer' name='DebugRemoteMetadata (size)'>4</attribute>
-                <attribute datatype='integer' name='DebugRemoteMetadata (sort-position)'>9</attribute>
+                <attribute datatype='integer' name='DebugRemoteMetadata (sort-position)'>11</attribute>
                 <attribute datatype='string' name='DebugRemoteMetadata (sort-sense)'>&quot;asc&quot;</attribute>
                 <attribute datatype='integer' name='DebugRemoteMetadata (storagewidth)'>2</attribute>
                 <attribute datatype='string' name='DebugRemoteType'>&quot;sint32&quot;</attribute>
@@ -1093,7 +1098,7 @@
               <statistics>
                 <statistic aggregation='Min' datatype='string'>&quot;AM&quot;</statistic>
                 <statistic aggregation='Max' datatype='string'>&quot;PM&quot;</statistic>
-                <statistic aggregation='Count' datatype='integer'>72400</statistic>
+                <statistic aggregation='Count' datatype='integer'>72335</statistic>
               </statistics>
               <attributes>
                 <attribute datatype='string' name='DebugRemoteCollation'>&quot;en_US&quot;</attribute>
@@ -1125,7 +1130,7 @@
               <statistics>
                 <statistic aggregation='Min' datatype='string'>&quot;FF&quot;</statistic>
                 <statistic aggregation='Max' datatype='string'>&quot;OR&quot;</statistic>
-                <statistic aggregation='Count' datatype='integer'>72400</statistic>
+                <statistic aggregation='Count' datatype='integer'>72335</statistic>
               </statistics>
               <attributes>
                 <attribute datatype='string' name='DebugRemoteCollation'>&quot;en_US&quot;</attribute>
@@ -1154,7 +1159,7 @@
               <statistics>
                 <statistic aggregation='Min' datatype='integer'>2005</statistic>
                 <statistic aggregation='Max' datatype='integer'>2016</statistic>
-                <statistic aggregation='Count' datatype='integer'>72400</statistic>
+                <statistic aggregation='Count' datatype='integer'>72335</statistic>
                 <statistic aggregation='Median' datatype='integer'>2012</statistic>
               </statistics>
               <attributes>
@@ -1172,7 +1177,7 @@
           </metadata-records>
         </connection>
       </extract>
-      <layout dim-ordering='alphabetic' dim-percentage='0.4677' group-percentage='0.117571' measure-ordering='alphabetic' measure-percentage='0.414729' show-structure='true' />
+      <layout dim-ordering='alphabetic' dim-percentage='0.470284' group-percentage='0.116279' measure-ordering='alphabetic' measure-percentage='0.413437' show-structure='true' />
       <style>
         <style-rule element='mark'>
           <encoding attr='color' field='[none:year:ok]' palette='tableau-10' type='palette'>
