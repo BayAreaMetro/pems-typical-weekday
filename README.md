@@ -21,7 +21,7 @@ latitude | Station latitude.
 longitude | Station longitude.
 state_pm | State postmile.
 abs_pm | Absolute postmile.
-time_period | Time periods.  See [MTC model time periods](http://analytics.mtc.ca.gov/foswiki/Main/TimePeriods)
+time_period | Time periods.  See [MTC model time periods](https://github.com/BayAreaMetro/modeling-website/wiki/TimePeriods)
 year |
 median_flow |
 avg_flow |
