@@ -3,7 +3,7 @@ pems-typical-weekday
 
 Generates typical weekday summaries of [Caltrans PeMS Data](http://pems.dot.ca.gov/).  For transportation planning purposes, we seek to understand "typical" traffic conditions, which we define here to occur Tuesdays, Wednesdays, and Thursdays in the months of March, April, May, September, October, and November.  Methods herein strive to process the PeMS data to inform estimates of typical weekday travel conditions over time.
 
-[!Data Flow Diagram](https://raw.githubusercontent.com/BayAreaMetro/pems-typical-weekday/master/DataFlowDiagram.png)
+<img src="https://raw.githubusercontent.com/BayAreaMetro/pems-typical-weekday/master/DataFlowDiagram.png" width=800>
 
 The `Consume` directory processes a year's worth of data and then combines the annual summaries into a single database.  The data is available in the `pems-typical-weekday` folder [on Box](https://mtcdrive.box.com/share-data).  The data is presented via Tableau (see the `.Twb` files in the `Summaries` directory) both [hourly](https://public.tableau.com/profile/lmz8249#!/vizhome/PeMSTypicalWeekdayHour_0/SelectaStation) and by (groups of hours) [time period](https://public.tableau.com/profile/lmz8249#!/vizhome/PeMSTypicalWeekdayPeriod_0/SelectaStation). 
 
