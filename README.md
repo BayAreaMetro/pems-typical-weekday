@@ -7,7 +7,7 @@ Generates typical weekday summaries of [Caltrans PeMS Data](http://pems.dot.ca.g
 
 The `Consume` directory processes a year's worth of data and then combines the annual summaries into a single database.  The data is available in the `pems-typical-weekday` folder [on Box](https://mtcdrive.box.com/share-data).  The data is presented via Tableau (see the `.Twb` files in the `Summaries` directory) both [hourly](https://public.tableau.com/profile/lmz8249#!/vizhome/PeMSTypicalWeekdayHour_0/SelectaStation) and by (groups of hours) [time period](https://public.tableau.com/profile/lmz8249#!/vizhome/PeMSTypicalWeekdayPeriod_0/SelectaStation). 
 
-To use the Tableau workbooks, first download the hourly or time period data files from the `pems-typical-weekday` folder [here](https://mtcdrive.box.com/share-data).  Then point the Tableau workbooks to local copies of the CSV file, rather than the data extract/csv my files point to (e.g., `M:\Data\Traffic\PeMS\pems_period.tde` or `D:/files/Box Sync/Share Data/pems-typical-weekday/pems_period.csv`).
+To use the Tableau workbooks, first download the hourly or time period data files from the `pems-typical-weekday` folder [here](https://mtcdrive.box.com/v/pems-typical-weekday).  Then point the Tableau workbooks to local copies of the CSV file, rather than the data extract/csv my files point to (e.g., `M:\Data\Traffic\PeMS\pems_period.tde` or `D:/files/Box Sync/Share Data/pems-typical-weekday/pems_period.csv`).
 
 ## Data Dictionary
 
