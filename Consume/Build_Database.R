@@ -18,7 +18,8 @@ library(dplyr)
 ### Relevant year strings
 year_array = c(2005, 2006, 2007, 2008, 2009,
                2010, 2011, 2012, 2013, 2014,
-               2015, 2016, 2017)
+               2015, 2016, 2017, 2018, 2019,
+               2020)
 
 ### Input file pieces
 input_file_first = "M:/Data/Traffic/PeMS/"
