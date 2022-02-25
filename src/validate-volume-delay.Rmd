@@ -1,0 +1,312 @@
+---
+title: "Validate Volume Delay Functions"
+author: "David Ory"
+output:
+  html_document:
+    theme: cosmo
+    toc: yes
+---
+## Administration
+
+#### Purpose
+Use PeMS data to explore the validity of the assumptions underlying our volume delay functions. The script consumes a consolidated PeMS database (created by scripts in `../Consume`), PeMS meta data, travel analysis zone area type data, and travel analysis zone coordinates and creates a flat file that is consumed by Tableau. 
+
+#### TODO
+3.  Make GH pages and re-write memo using embedded Tableau
+5.  Write data to Box
+6.  Some ugly year-specific stuff that could be done better
+
+
+#### OUTPUTS
+1.  A flat file that works with the Tableau file `charts-and-graphs-and-maps`. 
+
+## Overhead
+
+#### Libraries
+```{r overhead}
+library(knitr)
+library(reshape2)
+library(stringr)
+suppressMessages(library(dplyr))
+```
+
+#### Knitr config
+```{r config, include=FALSE}
+knitr::opts_chunk$set(cache=TRUE)
+```
+
+#### Parameters
+```{r parameters}
+META_FNAME_ARRAY = c("2005/d04_text_meta_2005_11_02.txt",
+                     "2006/d04_text_meta_2006_12_14.txt",
+                     "2007/d04_text_meta_2007_12_21.txt",
+                     "2008/d04_text_meta_2008_11_26.txt",
+                     "2009/d04_text_meta_2009_12_30.txt",
+                     "2010/d04_text_meta_2010_05_18.txt",
+                     "2011/d04_text_meta_2011_07_15.txt",
+                     "2012/d04_text_meta_2012_11_16.txt",
+                     "2013/d04_text_meta_2013_12_13.txt",
+                     "2014/d04_text_meta_2014_12_06.txt",
+                     "2015/d04_text_meta_2015_12_13.txt")
+
+YEAR_ARRAY_STARTING_2006 = c(2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015)
+```
+
+
+#### Remote I/O
+```{r remote-io}
+F_PEMS_DATABASE = "~/../Box Sync/Share Data/pems-typical-weekday/pems_hour.Rdata"
+
+F_TAZ_XY_COORDS = "~/GitHub/travel-model-one/utilities/taz-xy-coordinates/taz_nodes_WGS84.csv"
+
+F_META_DATA_LOCATION = "M:/Data/Traffic/PeMS/"
+
+F_2000_TAZ = "M:/Application/Model One/RTP2017/Scenarios/2000_05_002/OUTPUT/tazData.csv"
+F_2005_TAZ = "M:/Application/Model One/RTP2017/Scenarios/2005_05_003/OUTPUT/tazData.csv"
+F_2010_TAZ = "M:/Application/Model One/RTP2017/Scenarios/2010_05_003/OUTPUT/tazData.csv"
+
+F_TM_CROSS = "M:/Data/Traffic/PeMS/2010/To travel model network/ModelToPemsCrosswalk.csv"
+
+F_TM_NETWORK = "M:/Application/Model One/RTP2017/Scenarios/2010_05_003/OUTPUT/avgload5period.csv"
+
+F_OUTPUT_TABLEAU = "M:/Data/Traffic/PeMS/explore-volume-delay/output_for_tableau.csv"
+
+```
+
+#### Data Reads
+```{r data-reads}
+# 1 - consolidated PeMS database
+load(F_PEMS_DATABASE)
+
+# 2 - travel analysis zone centroid coordinates
+taz_cords <- read.table(file = F_TAZ_XY_COORDS, header = TRUE, sep = ",", stringsAsFactors = FALSE)
+
+# 3 - PeMS meta-data to make sure PeMS coordinates are present
+input_file <- paste(F_META_DATA_LOCATION, META_FNAME_ARRAY[1], sep = "")
+temp <- read.csv(input_file, header = TRUE, sep = "\t")
+input_meta <- temp %>%
+  select(station = ID, latitude = Latitude, longitude = Longitude)
+for(i in 2:length(F_META_DATA_LOCATION)){
+  input_file <- paste(F_META_DATA_LOCATION, META_FNAME_ARRAY[i], sep = "")
+  input_data <- read.csv(input_file, header = TRUE, sep = "\t")
+  input_data <- input_data %>%
+    select(station = ID, latitude = Latitude, longitude = Longitude)
+  input_meta <- rbind(input_meta, input_data)
+  
+}
+
+# 4 - travel analysis zone data (for area type)
+input_data <- read.csv(F_2005_TAZ, header = TRUE, sep = ",", stringsAsFactors = FALSE)
+input_taz <- input_data %>%
+  select(taz = ZONE, area_type = AREATYPE) %>%
+  mutate(year = 2005) 
+
+input_data <- read.csv(F_2010_TAZ, header = TRUE, sep = ",", stringsAsFactors = FALSE)
+input_data <- input_data %>%
+  select(taz = ZONE, area_type = AREATYPE) %>%
+  mutate(year = 2010) 
+input_taz <- rbind(input_taz, input_data)
+
+# 5 - PeMS travel model crosswalk
+input_data <- read.csv(F_TM_CROSS, header = TRUE, sep = ",", stringsAsFactors = FALSE)
+crosswalk_df <- input_data %>%
+  filter(use == 1) %>% # crosswalk also includes parallel HOV links
+  select(station = id, a, b)
+
+# 6 - travel model network to get area type for stations without coordinates
+input_data <- read.csv(F_TM_NETWORK, header = TRUE, sep = ",", stringsAsFactors = FALSE)
+network_df <- input_data %>%
+  select(a, b, area_type_int = at, facility_type_int = ft)
+
+remove(input_data)
+
+```
+
+#### Find the closest Travel Model One travel analysis zone for each PeMS station to get area type
+```{r nearest-taz}
+# Prepare meta-data
+data_meta <- input_meta %>%
+  filter(!(is.na(latitude))) %>%
+  group_by(station) %>%
+  summarise(mean_latitude = mean(latitude), mean_longitude = mean(longitude)) %>%
+  ungroup() %>%
+  select(station, latitude = mean_latitude, longitude = mean_longitude) %>%
+  mutate(taz = NA, closest_taz_distance = NA)
+  
+# Go through each station and find the nearest TAZ
+station_array <- data_meta$station
+latitude_array <- data_meta$latitude
+longitude_array <- data_meta$longitude
+
+for(i in 1:length(station_array)){
+  working <- taz_cords %>%
+    mutate(station = station_array[i]) %>%
+    mutate(distance = sqrt((latitude - latitude_array[i])^2 + (longitude - longitude_array[i])^2)) %>%
+    select(station, N, distance)
+  
+  working <- arrange(working, distance)
+  working <- head(working,1)
+  
+  data_meta <- left_join(data_meta, working, by = c("station"))
+  
+  data_meta <- data_meta %>%
+    mutate(taz = ifelse(is.na(N), taz, N)) %>%
+    mutate(closest_taz_distance = ifelse(is.na(N), closest_taz_distance, distance)) %>%
+    select(-N, -distance)
+  
+}
+
+remove(working)
+
+```
+
+#### Get the Travel Model One area type for each station
+```{r area-type}
+data_taz_2005 <- input_taz %>%
+  filter(year == 2005) %>%
+  select(taz, at_2005 = area_type)
+
+data_taz_2010 <- input_taz %>%
+  filter(year == 2010) %>%
+  select(taz, at_2010 = area_type)
+
+data_taz <- left_join(data_taz_2005, data_taz_2010, by = c("taz"))
+
+# Just assign the closest year for each PeMS data year
+data_taz <- data_taz %>%
+  mutate(at_2006 = at_2005) %>%
+  mutate(at_2007 = at_2005) %>%
+  mutate(at_2008 = at_2010) %>%
+  mutate(at_2009 = at_2010) %>%
+  mutate(at_2011 = at_2010) %>%
+  mutate(at_2012 = at_2010) %>%
+  mutate(at_2013 = at_2010) %>%
+  mutate(at_2014 = at_2010) %>%
+  mutate(at_2015 = at_2010)
+
+data_taz_melt <- melt(data_taz, id = c("taz"))
+
+data_taz_ready <- data_taz_melt %>%
+  mutate(year = as.numeric(str_sub(variable, 4,7))) %>%
+  select(taz, year, area_type_int = value) %>%
+  mutate(area_type = 'Missing') %>%
+  mutate(area_type = ifelse(area_type_int == 5, "Rural", area_type)) %>%
+  mutate(area_type = ifelse(area_type_int == 4, "Suburban", area_type)) %>%
+  mutate(area_type = ifelse(area_type_int == 3, "Urban", area_type)) %>%
+  mutate(area_type = ifelse(area_type_int == 2, "Urban Business", area_type)) %>%
+  mutate(area_type = ifelse(area_type_int == 1, "Central Business District", area_type)) %>%
+  mutate(area_type = ifelse(area_type_int == 0, "Regional Core", area_type))
+
+table(data_taz_ready$area_type)
+
+data_meta <- left_join(data_meta, data_taz_ready, by = c("taz"))
+
+remove(data_taz, data_taz_melt, data_taz_2005, data_taz_2010)
+
+```
+
+#### Use crosswalk and network to get area type for stations with missing coordinates
+```{r check-crosswalk}
+missing_meta <- input_meta %>%
+  filter(is.na(latitude)) %>%
+  select(station) %>%
+  ungroup()
+
+missing_meta <- left_join(missing_meta, crosswalk_df, by = c("station"))
+
+missing_meta <- missing_meta %>%
+  filter(!(is.na(a)))
+
+missing_meta <- left_join(missing_meta, network_df, by = c("a", "b"))
+
+missing_meta <- missing_meta %>%
+  filter(!(is.na(area_type_int))) %>%
+  select(station, area_type_int) %>%
+  mutate(area_type = 'Missing') %>%
+  mutate(area_type = ifelse(area_type_int == 5, "Rural", area_type)) %>%
+  mutate(area_type = ifelse(area_type_int == 4, "Suburban", area_type)) %>%
+  mutate(area_type = ifelse(area_type_int == 3, "Urban", area_type)) %>%
+  mutate(area_type = ifelse(area_type_int == 2, "Urban Business", area_type)) %>%
+  mutate(area_type = ifelse(area_type_int == 1, "Central Business District", area_type)) %>%
+  mutate(area_type = ifelse(area_type_int == 0, "Regional Core", area_type)) %>%
+  mutate(latitude = NA, longitude = NA, taz = NA, closest_taz_distance = NA)
+
+# Need to add year -- assume area type is constant
+missing_meta_original <- missing_meta
+missing_meta <- missing_meta_original %>%
+  mutate(year = 2005)
+for(year_counter in YEAR_ARRAY_STARTING_2006){
+  temp <- missing_meta_original %>%
+    mutate(year = year_counter)
+  missing_meta <- rbind(missing_meta, temp) 
+}
+
+# Check that there's no overlap
+check_missing <- missing_meta %>%
+  select(station) %>%
+  mutate(donkey = "victory")
+
+check_meta <- data_meta %>%
+  select(station)
+
+check_meta <- left_join(check_meta, check_missing, by = c("station"))
+
+table(check_meta$donkey)
+
+# Append
+data_meta <- rbind(data_meta, missing_meta)
+
+remove(missing_meta_original, check_missing, check_meta)
+```
+
+#### Filter non-freeways
+```{r ft-check}
+hour_freeways <- hour_all %>%
+  filter(route == 4 |
+           route == 17 |
+           route == 24 |
+           route == 80 |
+           route == 84 |
+           route == 85 |
+           route == 87 |
+           route == 92 |
+           route == 101 |
+           route == 237 |
+           route == 280 |
+           route == 380 |
+           route == 580 |
+           route == 680 |
+           route == 780 |
+           route == 880 |
+           route == 980)
+```
+
+
+#### Create data for Tableau
+```{r create-tableau}
+tableau_out <- hour_freeways %>%
+  ungroup() %>%
+  filter(type == "ML") %>%
+  select(year, station, hour, flow = median_flow, lanes, speed = median_speed, occupancy = median_occup) %>%
+  mutate(flow_per_lane = flow / lanes) %>%
+  mutate(density = flow_per_lane / speed)
+
+tableau_out <- left_join(tableau_out, data_meta, by = c("station", "year"))
+
+```
+
+#### Data writes
+```{r data-writes}
+write.csv(tableau_out, file = F_OUTPUT_TABLEAU,  row.names = FALSE, quote = F)
+
+```
+
+
+
+
+
+
+
+
+
+
