@@ -19,7 +19,7 @@ library(dplyr)
 year_array = c(2005, 2006, 2007, 2008, 2009,
                2010, 2011, 2012, 2013, 2014,
                2015, 2016, 2017, 2018, 2019,
-               2020)
+               2020, 2021, 2022)
 
 ### Input file pieces
 input_file_first = "M:/Data/Traffic/PeMS/"
@@ -50,7 +50,8 @@ time_period = "_hour_"
 year = 2005
 input_file <- paste(input_file_first, year, input_file_third, time_period, year, input_file_sixth, sep = "")
 load(input_file)
-hour_all <- rbind(data_sum_hour_write)
+print(paste("Loaded",nrow(data_sum_hour_write),"from",input_file))
+hour_all <- data_sum_hour_write %>% ungroup()
 
 hour_all <- hour_all %>%
   mutate(state_pm = as.numeric(state_pm))
@@ -61,17 +62,20 @@ for(year in year_array){
   if (year != 2005){
     input_file <- paste(input_file_first, year, input_file_third, time_period, year, input_file_sixth, sep = "")
     load(input_file)
+    data_sum_hour_write <- ungroup(data_sum_hour_write)
+    print(paste("Loaded",nrow(data_sum_hour_write),"from",input_file))
+    
     data_sum_hour_write <- data_sum_hour_write %>%
       mutate(state_pm = as.numeric(state_pm))
-    hour_all <- rbind(hour_all, data_sum_hour_write)
+    hour_all <- rbind(hour_all, data_sum_hour_write) %>% ungroup()
   }
 }
 
 save(hour_all, file = F_OUTPUT_HOUR_R)
-print(paste("Wrote file ", F_OUTPUT_HOUR_R))
+print(paste("Wrote file", F_OUTPUT_HOUR_R))
 
 write.csv(hour_all, file = F_OUTPUT_HOUR_CSV, row.names = FALSE, quote = F) # SQL server does not like quotes
-print(paste("Wrote file ", F_OUTPUT_HOUR_CSV))
+print(paste("Wrote file", F_OUTPUT_HOUR_CSV))
 
 ## Period reads and binds
 time_period = "_period_"
@@ -80,7 +84,8 @@ time_period = "_period_"
 year = 2005
 input_file <- paste(input_file_first, year, input_file_third, time_period, year, input_file_sixth, sep = "")
 load(input_file)
-period_all <- rbind(data_sum_period_write)
+print(paste("Loaded",nrow(data_sum_period_write),"from",input_file))
+period_all <- data_sum_period_write %>% ungroup()
 period_all <- period_all %>%
   mutate(state_pm = as.numeric(state_pm))
 
@@ -90,6 +95,9 @@ for(year in year_array){
   if (year != 2005){
     input_file <- paste(input_file_first, year, input_file_third, time_period, year, input_file_sixth, sep = "")
     load(input_file)
+    data_sum_period_write <- ungroup(data_sum_period_write)
+    print(paste("Loaded",nrow(data_sum_period_write),"from",input_file))
+
     data_sum_period_write <- data_sum_period_write %>%
       mutate(state_pm = as.numeric(state_pm))
     period_all <- rbind(period_all, data_sum_period_write)
@@ -97,8 +105,8 @@ for(year in year_array){
 }
 
 save(period_all, file = F_OUTPUT_PERIOD_R)
-print(paste("Wrote file ", F_OUTPUT_PERIOD_R))
+print(paste("Wrote file", F_OUTPUT_PERIOD_R))
 
 write.csv(period_all, file = F_OUTPUT_PERIOD_CSV, row.names = FALSE, quote = F) # SQL server does not like quotes
-print(paste("Wrote file ", F_OUTPUT_PERIOD_CSV))
+print(paste("Wrote file", F_OUTPUT_PERIOD_CSV))
 
