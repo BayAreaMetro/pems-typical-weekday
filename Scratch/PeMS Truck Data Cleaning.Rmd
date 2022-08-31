@@ -11,6 +11,7 @@ library(tidyverse)
 library(sf)
 library(sp)
 library(proj4)
+library(tidyr)
 ```
 
 ```{r}
@@ -57,8 +58,9 @@ for (i in 1:length(data_files)){
   tb_clean <- tb_d4 %>%
   mutate(date = as.Date(Timestamp, format = "%m/%d/%Y %H:%M:%S")) %>%
   mutate(hour = as.numeric(str_sub(as.character(Timestamp), 12, 13))) %>%
+  mutate(year = as.numeric(str_sub(as.character(Timestamp), 7, 10))) %>%
   mutate(day_of_week = weekdays(date)) %>%
-  select(Timestamp, date, hour, day_of_week, District.Identifier, Census.Station.Identifier, Census.Substation.Identifier, Freeway.Identifier, Freeway.Direction, County.Identifier, District.Identifier, Absolute.Postmile, Station.Type, Census.Station.Set.ID, Vehicle.Count) 
+  select(Timestamp, date, year, hour, day_of_week, District.Identifier, Census.Station.Identifier, Census.Substation.Identifier, Freeway.Identifier, Freeway.Direction, County.Identifier, District.Identifier, Absolute.Postmile, Station.Type, Census.Station.Set.ID, Vehicle.Count) 
   
   tb_clean_agg <- aggregate(Vehicle.Count~., tb_clean, FUN=sum)
   tb_count_agg <- rbind(tb_count_agg, tb_clean_agg)
@@ -68,7 +70,7 @@ tb_count_agg
 ```
 
 ```{r}
-#write.csv(tb_count_agg, "E:\\Box\\Modeling and Surveys\\Share Data\\pems-typical-weekday-trucks\\pems_truck_hour.csv")
+write.csv(tb_count_agg, "E:\\Box\\Modeling and Surveys\\Share Data\\pems-typical-weekday-trucks\\pems_truck_hour.csv")
 ```
 
 
@@ -142,15 +144,66 @@ time_per_df_counts
 tb_count_agg <- left_join(tb_count_agg, time_per_df, by=c('hour'))
 
 tb_sum_period <- tb_count_agg %>%
-  group_by(Census.Substation.Identifier, District.Identifier, Freeway.Identifier, Freeway.Direction, Lat, Long, time_period) %>%
+  group_by(Census.Substation.Identifier, District.Identifier, Freeway.Identifier,
+           Freeway.Direction, Absolute.Postmile, Station.Type,
+           Lat, Long, time_period, year) %>%
   summarise(median_count = median(Vehicle.Count), avg_count = mean(Vehicle.Count))
-  
+
+# Change variable names to be runable by crosswalk_pems_to_TM.R
+# station, district, route, direction, type, abs_pm, latitude, longitude, year
+
+colnames(tb_sum_period) <- c('station', 'district', 'route', 'direction', 'abs_pm',
+                             'type', 'latitude', 'longitude', 'time_period',
+                             'year', 'median_count', 'avg_count')
+
 tb_sum_period
 
 ```
 
 ```{r}
-length(unique(tb_sum_period$Census.Substation.Identifier))
+#write.csv(tb_sum_period, "E:\\Box\\Modeling and Surveys\\Share Data\\pems-typical-weekday-trucks\\pems_truck_period.csv")
+```
+
+```{r}
+# Pull in the results of crosswalk_pems_to_TM.R and join to the summary aggregate
+# tables.
+# Then join to the freight counts from 2015_TM152_NGF_04
+
+model_data <- read.csv("L:\\Application\\Model_One\\NextGenFwys\\2015_TM152_NGF_04\\OUTPUT\\avgload5period_vehclasses.csv")
+model_data$AB <- paste(model_data$a, model_data$b, sep = ", ")
+
+hv_fields <- colnames(model_data)[grep("hv", colnames(model_data))]
+sm_fields <- colnames(model_data)[grep("sm", colnames(model_data))]
+sm_fields <- sm_fields[sm_fields != "smtropc"]
+
+model_data <- model_data %>% select(AB, hv_fields, sm_fields)
+
+pems_crosswalk <- read.csv("M:\\Crosswalks\\PeMSStations_TM1network\\crosswalk_truck_2015.csv")
+pems_crosswalk$AB <- paste(pems_crosswalk$A, pems_crosswalk$B, sep = ", ")
+
+# convert to long to break up period and vehicle class
+model_data <- subset(model_data, AB %in% pems_crosswalk$AB)
+model_data <- model_data %>% gather(period_class, model_vol, c(-AB))
+model_data$time_period <- str_sub(model_data$period_class, 4, 5)
+model_data$veh_class <- sub(".*_", "", model_data$period_class)
+model_data <- model_data %>% select(-period_class)
+
+# convert back to wide 
+model_data <- model_data %>% spread(key = veh_class, value = model_vol)
+model_data$vol_tot <- model_data$hv + model_data$hvt + model_data$sm + model_data$smt
+
+model_data <- left_join(model_data, pems_crosswalk, by=c("AB"))
+model_data <- model_data %>% select(-c(A, B, distlink, A_B, stationsonlink, district, route, type, abs_pm, latitude, longitude, direction))
+
+#join to observed data
+model_obs <- tb_sum_period %>% left_join(model_data, by = c("station"="station","time_period"="time_period"))
+model_obs$abs_diff <- model_obs$avg_count - model_obs$vol_tot
+model_obs$p_diff <- (model_obs$avg_count - model_obs$vol_tot)/model_obs$vol_tot*100
+model_obs
+```
+
+```{r}
+#write.csv(model_obs, "L:\\Application\\Model_One\\NextGenFwys\\2015_TM152_NGF_04\\OUTPUT\\validation\\roadway\\pems_TM152_truck_period.csv")
 ```
 
 
