@@ -1,10 +1,5 @@
----
-title: "Make"
-output: html_notebook
----
 
 # Overhead
-```{r overhead}
 packages_vector <- c("tidyverse",
                      "chron")
 
@@ -16,10 +11,7 @@ for (package in packages_vector){
   library(package, character.only = TRUE)
 }
 
-```
-
 # Remote I/O
-```{r remote-io}
 external_dir <- "../data/external/"
 interim_dir <- "../data/interim/"
 processed_dir <- "../data/processed/"
@@ -31,10 +23,7 @@ existing_period_to_bind_with_filename <- paste0(interim_dir, "mtc_pems_period.RD
 output_hour_filename <- paste0(processed_dir, "pems_hour.RDS")
 output_period_filename <- paste0(processed_dir, "pems_period.RDS")
 
-```
-
 # Parameters
-```{r parameters}
 year_array <- c(2018, 2019)
 district_array <- c(3, 5, 10)
 month_array <- c(3, 4, 5, 9, 10, 11)
@@ -118,10 +107,7 @@ time_per_counts_df <- select(as.data.frame(table(time_per_df$time_period)),
                              time_period = Var1, 
                              time_period_count = Freq)
 
-```
-
 # Methods
-```{r methods}
 consume_meta <- function(data_dir, district, year) {
   
   district_string <- sprintf("%02d", district)
@@ -294,10 +280,7 @@ write_annual_to_disk <- function(out_dir, input_hour_df, input_period_df, input_
   
 }
 
-```
-
 # Reductions
-```{r reductions}
 across_years_hour_df <- tibble()
 across_years_period_df <- tibble()
 
@@ -343,10 +326,8 @@ for (year in year_array) {
   
 } # year
 
-```
 
 # Write to Disk
-```{r write}
 output_hour_df <- across_years_hour_df
 output_period_df <- across_years_period_df
 
@@ -362,7 +343,3 @@ if (str_length(existing_period_to_bind_with_filename) > 1){
 
 saveRDS(output_hour_df, output_hour_filename)
 saveRDS(output_period_df, output_period_filename)
-
-```
-
-
