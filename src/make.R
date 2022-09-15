@@ -18,7 +18,7 @@ OUTPUT_DATA_DIR <- "../data"     # hourly and period summaries (by district, yea
 
 # Parameters
 year_array     <- c(2018, 2019)
-district_array <- c(3, 4) # c(3, 5, 10)
+district_array <- c(3, 4, 5, 10)  # d4 = MTC
 month_array    <- c(3, 4, 5, 9, 10, 11)
 
 # Share of sensor data that must be observed to be included
