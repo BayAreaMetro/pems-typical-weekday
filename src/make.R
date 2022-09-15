@@ -13,19 +13,11 @@ for (package in packages_vector){
 }
 
 # I/O
-external_dir  <- "M:/Data/Traffic/PeMS/"
-interim_dir   <- "../data/interim/"
-processed_dir <- "../data/processed/"
-
-# use "" for none
-existing_hour_to_bind_with_filename <- paste0(interim_dir, "mtc_pems_hour.RDS")
-existing_period_to_bind_with_filename <- paste0(interim_dir, "mtc_pems_period.RDS")
-
-output_hour_filename <- paste0(processed_dir, "pems_hour.RDS")
-output_period_filename <- paste0(processed_dir, "pems_period.RDS")
+SOURCE_DATA_DIR <- "M:/Data/Traffic/PeMS"  # raw data files are in here, in sub directories by year
+OUTPUT_DATA_DIR <- "../data"     # hourly and period summaries (by district, year) written here
 
 # Parameters
-year_array     <- c(2018)
+year_array     <- c(2018, 2019)
 district_array <- c(3, 4) # c(3, 5, 10)
 month_array    <- c(3, 4, 5, 9, 10, 11)
 
@@ -69,7 +61,7 @@ consume_meta <- function(data_dir, district, year) {
   stopifnot(length(meta_file_vector) > 0)
   meta_filename <- file.path(data_dir, year, meta_file_vector[1])
   df <- read_delim(meta_filename, delim = "\t", col_types = cols(.default = col_character()))
-  print(problems(df))
+  # print(problems(df))
   return(df)
 }
 
@@ -136,7 +128,7 @@ consume_raw <- function(data_dir, district, year, month){
   
   filename <- paste0("d", district_string, "_text_station_hour_", year, "_", month_string, ".txt")
   df <- read_csv(file.path(data_dir, year, filename), col_names = HOUR_COLUMN_NAMES, col_types = HOUR_COLUMN_TYPES)
-  print(problems(df))
+  # print(problems(df))
   return(df)
 }
 
@@ -146,8 +138,8 @@ consume_raw <- function(data_dir, district, year, month){
 #' Adds lanes column based on presence of flow data for lanes
 clean_raw <- function(input_df){
   
-  print('clean_raw: input_df head:')
-  print(head(input_df))
+  # print('clean_raw: input_df head:')
+  # print(head(input_df))
   df <- input_df %>%
     filter(pct_obs >= MIN_PCT_OBS) %>%
     mutate(date = as.Date(time_stamp_string, format = "%m/%d/%Y %H:%M:%S")) %>%
@@ -166,7 +158,6 @@ clean_raw <- function(input_df){
     select(date, day_of_week, station, district, route, direction, type, hour, 
            pct_obs, length, flow, speed, lanes, occupancy)
   
-  print(head(df))
   return(df)
 }
 
@@ -317,7 +308,7 @@ for (year in year_array) {
   for (district in district_array){
     
     # read meta data
-    meta_df <- consume_meta(external_dir, district, year)
+    meta_df <- consume_meta(SOURCE_DATA_DIR, district, year)
     
     across_months_df <- tibble()
     
@@ -325,7 +316,7 @@ for (year in year_array) {
       
       print(paste("Consuming Year", year, "Month", month, "for District", district))
       
-      raw_df <- consume_raw(external_dir, district, year, month)
+      raw_df <- consume_raw(SOURCE_DATA_DIR, district, year, month)
       clean_df <- clean_raw(raw_df)
       across_months_df <- bind_rows(across_months_df, clean_df)
       
@@ -337,37 +328,9 @@ for (year in year_array) {
     annual_hourly_sum_df <- sum_for_hours(temp_df)
     annual_period_sum_df <- sum_for_periods(temp_df)
     
-    write_annual_district_to_disk(processed_dir, 
+    write_annual_district_to_disk(OUTPUT_DATA_DIR, 
                                   annual_hourly_sum_df, 
                                   annual_period_sum_df, meta_df, 
                                   year, district)
-    
-    remove(temp_df)
-    
-    across_districts_hour_df <- bind_rows(annual_hourly_sum_df, across_districts_hour_df)
-    across_districts_period_df <- bind_rows(annual_period_sum_df, across_districts_period_df)
-    
   } # district
-  
-  across_years_hour_df <- bind_rows(across_districts_hour_df, across_years_hour_df)
-  across_years_period_df <- bind_rows(across_districts_period_df, across_years_period_df)
-  
 } # year
-
-
-# Write to Disk
-output_hour_df <- across_years_hour_df
-output_period_df <- across_years_period_df
-
-if (str_length(existing_hour_to_bind_with_filename) > 1){
-  exist_df <- readRDS(existing_hour_to_bind_with_filename)
-  output_hour_df <- bind_rows(exist_df, output_hour_df)
-}
-
-if (str_length(existing_period_to_bind_with_filename) > 1){
-  exist_df <- readRDS(existing_period_to_bind_with_filename)
-  output_period_df <- bind_rows(exist_df, output_period_df)
-}
-
-saveRDS(output_hour_df, output_hour_filename)
-saveRDS(output_period_df, output_period_filename)
