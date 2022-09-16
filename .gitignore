@@ -8,3 +8,5 @@ data/pems_hour.Rdata
 data/pems_period.Rdata
 data/pems_hour.RDS
 data/pems_period.RDS
+data/pems_hour.csv
+data/pems_period.csv

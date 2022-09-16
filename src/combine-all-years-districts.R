@@ -9,8 +9,7 @@
 library(dplyr)
 
 # I/O
-OUTPUT_DATA_DIR <- "../data"     # hourly and period summaries (by district, year) written here
-
+OUTPUT_DATA_DIR <- "../data"     # hourly and period summaries (by district, year)
 file_list <-  list.files(path=OUTPUT_DATA_DIR)
 
 hour_df   <- tibble()
@@ -32,21 +31,26 @@ for (file_idx in 1:length(file_list)) {
 }
 
 # these are big -- do not commit!
+hour_output_file   <- file.path(OUTPUT_DATA_DIR, 'pems_hour')    # suffix to be added below
+period_output_file <- file.path(OUTPUT_DATA_DIR, 'pems_period')  # suffix to be added below
 
 # Write as Rdata (for tableau)
-hour_output_file <- file.path(OUTPUT_DATA_DIR, 'pems_hour.RData')
-save(hour_df, file=hour_output_file)
-print(paste('Wrote',hour_output_file))
+save(hour_df, file=paste0(hour_output_file,".Rdata"))
+print(paste('Wrote',paste0(hour_output_file,".Rdata")))
 
-period_output_file <- file.path(OUTPUT_DATA_DIR, 'pems_period.RData')
-save(period_df, file=period_output_file)
-print(paste('Wrote',period_output_file))
+save(period_df, file=paste0(period_output_file,".Rdata"))
+print(paste('Wrote',paste0(period_output_file,".Rdata")))
 
 # Write as RDS
-hour_output_file <- file.path(OUTPUT_DATA_DIR, 'pems_hour.RDS')
-saveRDS(hour_df, hour_output_file)
-print(paste('Wrote',hour_output_file))
+saveRDS(hour_df, paste0(hour_output_file,".RDS"))
+print(paste('Wrote',paste0(hour_output_file,".RDS")))
 
-period_output_file <- file.path(OUTPUT_DATA_DIR, 'pems_period.RDS')
-saveRDS(period_df, period_output_file)
-print(paste('Wrote',period_output_file))
+saveRDS(period_df, paste0(period_output_file,".RDS"))
+print(paste('Wrote',paste0(period_output_file,".RDS")))
+
+# write as CSV
+write.csv(hour_df, paste0(hour_output_file,".csv"), row.names=FALSE)
+print(paste('Wrote',paste0(hour_output_file,".csv")))
+
+write.csv(period_df, paste0(period_output_file,".csv"), row.names=FALSE)
+print(paste('Wrote',paste0(period_output_file,".csv")))
