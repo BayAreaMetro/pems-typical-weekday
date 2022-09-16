@@ -10,17 +10,18 @@ USAGE = '
 library(dplyr)
 library(stringr)
 
-external_dir  <- "M:/Data/Traffic/PeMS"
-processed_dir <- "../data/processed"
+SOURCE_DATA_DIR <- "M:/Data/Traffic/PeMS"  # raw data files are in here, in sub directories by year
+OUTPUT_DATA_DIR <- "../data"     # hourly and period summaries (by district, year) written here
 
-HOUR_INDEX_COLUMNS <- c("station","district","route","direction","type","hour","year")
-PERIOD_INDEX_COLUMNS <- c("station","district","route","direction","type","time_period","year")
+# lanes needs to be included because there have been expansions
+HOUR_INDEX_COLUMNS <- c("station","district","route","direction","type","lanes","hour","year")
+PERIOD_INDEX_COLUMNS <- c("station","district","route","direction","type","lanes","time_period","year")
 
 
 #' For all X.legacy/X.new columns, compare equality
-compare_legacy_vs_new_columns <- function(df, INDEX_COLUMNS) {
-  column_names   <- colnames(hour_merged_df)
-  column_types   <- sapply(hour_merged_df, typeof)
+compare_legacy_vs_new_columns <- function(merged_df, INDEX_COLUMNS) {
+  column_names   <- colnames(merged_df)
+  column_types   <- sapply(merged_df, typeof)
 
   for (i in 1:length(column_names)) {
     column_name <- column_names[i]
@@ -30,25 +31,31 @@ compare_legacy_vs_new_columns <- function(df, INDEX_COLUMNS) {
   
     column_type         <- column_types[i]
     new_column_name     <- str_replace(column_name, ".legacy", ".new")
-    diff_column_name    <- str_replace(column_name, ".legacy", "diff")
+    diff_column_name    <- str_replace(column_name, ".legacy", ".diff")
     unequal_column_name <- str_replace(column_name, ".legacy", ".unequal")
     both_na_column_name <- str_replace(column_name, ".legacy", ".both_na")
     one_na_column_name  <- str_replace(column_name, ".legacy", ".one_na")
     
-    hour_merged_df[diff_column_name]    <- abs(hour_merged_df[column_name] - hour_merged_df[new_column_name])
-    hour_merged_df[both_na_column_name] <- is.na(hour_merged_df[column_name]) & is.na(hour_merged_df[new_column_name])
-    hour_merged_df[one_na_column_name]  <- xor(is.na(hour_merged_df[column_name]), is.na(hour_merged_df[new_column_name]))
+    merged_df[diff_column_name]    <- abs(merged_df[column_name] - merged_df[new_column_name])
+    merged_df[both_na_column_name] <- is.na(merged_df[column_name]) & is.na(merged_df[new_column_name])
+    merged_df[one_na_column_name]  <- xor(is.na(merged_df[column_name]), is.na(merged_df[new_column_name]))
     
     # within margin of error
-    hour_merged_df[unequal_column_name] <- abs(hour_merged_df[diff_column_name]) > 1e-5
+    merged_df[unequal_column_name] <- abs(merged_df[diff_column_name]) > 1e-5
     
-    # print(head(select(hour_merged_df, c(INDEX_COLUMNS, column_name, new_column_name, diff_column_name, unequal_column_name))))
+    # print(head(select(merged_df, c(INDEX_COLUMNS, column_name, new_column_name, diff_column_name, unequal_column_name))))
     
     print(sprintf('  Column %20s has type %8s and %6d unequal rows, %6d both-NA rows and %6d one-NA rows',
                   column_name, column_type,
-                  sum(hour_merged_df[unequal_column_name], na.rm=TRUE), 
-                  sum(hour_merged_df[both_na_column_name]), 
-                  sum(hour_merged_df[one_na_column_name])))
+                  sum(merged_df[unequal_column_name], na.rm=TRUE), 
+                  sum(merged_df[both_na_column_name]), 
+                  sum(merged_df[one_na_column_name])))
+    
+    if (sum(merged_df[unequal_column_name], na.rm=TRUE) > 0) {
+      print('    Unequal:')
+      print(head( select(filter(merged_df, get(unequal_column_name)==TRUE),
+                         c(INDEX_COLUMNS, column_name, new_column_name, diff_column_name, unequal_column_name))))
+    }
   }
 }
 
@@ -61,12 +68,11 @@ if (length(args) < 1) {
 YEAR     <- as.numeric(args[1])
 DISTRICT <- 4 # legacy files are only for district 4
 
+legacy_hour_file   <- file.path(SOURCE_DATA_DIR, YEAR, paste0("pems_hour_",YEAR,".Rdata"))
+legacy_period_file <- file.path(SOURCE_DATA_DIR, YEAR, paste0("pems_period_",YEAR,".Rdata"))
     
-legacy_hour_file   <- file.path(external_dir, YEAR, paste0("pems_hour_",YEAR,".Rdata"))
-legacy_period_file <- file.path(external_dir, YEAR, paste0("pems_period_",YEAR,".Rdata"))
-    
-hour_file   <- file.path(processed_dir, sprintf("pems_hour_d%02d_%d.RDS", DISTRICT, YEAR))
-period_file <- file.path(processed_dir, sprintf("pems_period_d%02d_%d.RDS", DISTRICT, YEAR))
+hour_file   <- file.path(OUTPUT_DATA_DIR, sprintf("pems_hour_d%02d_%d.RDS", DISTRICT, YEAR))
+period_file <- file.path(OUTPUT_DATA_DIR, sprintf("pems_period_d%02d_%d.RDS", DISTRICT, YEAR))
     
 # read legacy files
 load(legacy_hour_file)    # data_sum_hour_write
@@ -98,7 +104,6 @@ hour_merged_df <- full_join(x     = data_sum_hour_write,
 print('=== Comparing hour files ===')
 print(paste('legacy: ',legacy_hour_file))
 print(paste('   new: ',hour_file))
-
 compare_legacy_vs_new_columns(hour_merged_df, HOUR_INDEX_COLUMNS)
     
 # create merged period data frame and compare
