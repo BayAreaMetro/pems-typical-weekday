@@ -1,10 +1,3 @@
----
-title: "PeMS Truck Data Cleaning"
-output: html_document
-date: '2022-08-19'
----
-
-```{r}
 library(dplyr)
 library(R.utils)
 library(tidyverse)
@@ -12,9 +5,7 @@ library(sf)
 library(sp)
 library(proj4)
 library(tidyr)
-```
 
-```{r}
 # Unzip .gz files
 year <- 2015
 data_dir <- paste("E:\\Box\\Modeling and Surveys\\Share Data\\pems-typical-weekday-trucks\\Hourly Truck Data",
@@ -27,19 +18,12 @@ for (i in  gz_files){
   gunzip(paste(data_dir, i, sep = "\\"))
 }
 
-```
-
-
-```{r}
 # Open file for a single day
 tb <- read.table(paste(data_dir, data_files[1], sep = "\\"), sep = ",", header = F)
 
 colnames(tb) <- c('Timestamp', 'Census.Station.Identifier', 'Census.Substation.Identifier', 'Freeway.Identifier', 'Freeway.Direction', 'City.Identifier', 'County.Identifier', 'District.Identifier', 'Absolute.Postmile', 'Station.Type', 'Census.Station.Set.ID', 'Lane.Number', 'Vehicle.Class', 'Vehicle.Count', 'Average.Speed', 'Violation.Count', 'Violation.Codes', 'Single.Axle.Count', 'Tandem.Axle.Count', 'Tridem.Axle.Count', 'Quad.Axle.Count', 'Aveage.Gross.Weight', 'Gross.Weight.Distribution', 'Average.Single.Weight', 'Average.Tandem.Weight', 'Average.Tridem.Weight', 'Average.Quad.Weight', 'Average.Vehicle.Length', 'Vehicle.Length.Distribution', 'Average.Tandem.Spacing', 'Average.Tridem.Spacing', 'Average.Quad.Spacing', 'Average.Wheelbase', 'Wheelbase.Distribution', 'Total.Flex.ESAL.300', 'Total.Flex.ESAL.285', 'Total.Rigid.ESAL.300', 'Total.Rigid.ESAL.285')
 
-tb
-```
 
-```{r}
 # Hourly Census truck data is provided in single days instead of monthly values
 # and includes all districts
 
@@ -65,16 +49,10 @@ for (i in 1:length(data_files)){
   tb_clean_agg <- aggregate(Vehicle.Count~., tb_clean, FUN=sum)
   tb_count_agg <- rbind(tb_count_agg, tb_clean_agg)
 }
-
 tb_count_agg
-```
 
-```{r}
 write.csv(tb_count_agg, "E:\\Box\\Modeling and Surveys\\Share Data\\pems-typical-weekday-trucks\\pems_truck_hour.csv")
-```
 
-
-```{r}
 # Use State postmile instead of lat/longs
 
 postmile <- st_read(dsn = "E:\\Box\\Modeling and Surveys\\Share Data\\pems-typical-weekday-trucks\\Postmile Data\\ds1901.gdb", layer = "ds1901")
@@ -109,9 +87,7 @@ station_id_tb <- cbind(station_id_tb, shapes)
 
 # WRITE NAD 83 X,Y COORDS TO CSV AND CALCULATE LAT/LONG IN ARCGIS
 #write.csv(station_id_tb, "E:\\Box\\Modeling and Surveys\\Share Data\\pems-typical-weekday-trucks\\pems_truck_xy_lookup.csv")
-```
 
-```{r}
 # Pull in lat/long table and join to counts
 
 latlong_lookup <- read.csv("E:\\Box\\Modeling and Surveys\\Share Data\\pems-typical-weekday-trucks\\pems_truck_lat_long_lookup.csv")
@@ -119,10 +95,7 @@ latlong_lookup <- read.csv("E:\\Box\\Modeling and Surveys\\Share Data\\pems-typi
 latlong_lookup <- latlong_lookup %>% select(Census_Substation_Identifier, Lat, Long)
 tb_count_agg <- left_join(tb_count_agg, latlong_lookup, by=c('Census.Substation.Identifier'='Census_Substation_Identifier'))
 tb_count_agg
-```
 
-
-```{r}
 # Summarize by period
 
 # Data frame of time periods
@@ -158,13 +131,8 @@ colnames(tb_sum_period) <- c('station', 'district', 'route', 'direction', 'abs_p
 
 tb_sum_period
 
-```
-
-```{r}
 #write.csv(tb_sum_period, "E:\\Box\\Modeling and Surveys\\Share Data\\pems-typical-weekday-trucks\\pems_truck_period.csv")
-```
 
-```{r}
 # Pull in the results of crosswalk_pems_to_TM.R and join to the summary aggregate
 # tables.
 # Then join to the freight counts from 2015_TM152_NGF_04
@@ -200,18 +168,9 @@ model_obs <- tb_sum_period %>% left_join(model_data, by = c("station"="station",
 model_obs$abs_diff <- model_obs$avg_count - model_obs$vol_tot
 model_obs$p_diff <- (model_obs$avg_count - model_obs$vol_tot)/model_obs$vol_tot*100
 model_obs
-```
 
-```{r}
 #write.csv(model_obs, "L:\\Application\\Model_One\\NextGenFwys\\2015_TM152_NGF_04\\OUTPUT\\validation\\roadway\\pems_TM152_truck_period.csv")
-```
 
-
-
-
-
-SCRAP
-```{r}
 # Join locations and stations config files to the D4 subset of data
 
 stations_config <- read.table("E:\\Box\\Modeling and Surveys\\Share Data\\pems-typical-weekday-trucks\\Hourly Truck Data\\2015\\metadata\\all_text_tmg_stations_2016_11_03.txt", sep = ",")
@@ -228,5 +187,3 @@ tb_d4 <- left_join(tb_d4, stations_config, by=c('Census.Station.Identifier'='Loc
 left_join(tb_d4, locations_config, by=c('TMG.Station.ID'='Location.ID')) #Should be this one?
 
 sum(tb_d4$TMG.Station.ID %in% locations_config$Location.ID) #None of the District 4 ID's match the locations ID's
-```
-
