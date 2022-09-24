@@ -19,7 +19,8 @@ OUTPUT_DATA_DIR <- "../data"     # hourly and period summaries (by district, yea
 # Parameters
 year_array     <- c(2018, 2019)
 district_array <- c(3, 4, 5, 10)  # d4 = MTC
-month_array    <- c(3, 4, 5, 9, 10, 11)
+typical_travel_month_array      <- c(3, 4, 5, 9, 10, 11)
+all_months <- c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12)
 
 # Share of sensor data that must be observed to be included
 MIN_PCT_OBS = 100
@@ -34,8 +35,8 @@ MAX_FLOW_ZERO_PLAUSIBLE = 150.0
 MIN_DAYS_OBSERVED = 15
 
 # Relevant holidays database
-holiday_list  <- c("USLaborDay", "USMemorialDay", "USThanksgivingDay", "USVeteransDay")
-holiday_dates <- dates(as.character(holiday(2000:2025, holiday_list)), format = "Y-M-D")
+all_holidays_list  <- c('USNewYearsDay', 'USInaugurationDay', 'USMLKingsBirthday', 'USLincolnsBirthday', 'USWashingtonsBirthday', 'USMemorialDay', 'USIndependenceDay', 'USLaborDay', 'USColumbusDay', 'USElectionDay', 'USVeteransDay', 'USThanksgivingDay', 'USChristmasDay', 'USCPulaskisBirthday', 'USGoodFriday')
+all_holidays_dates <- dates(as.character(holiday(2000:2025, all_holidays_list)), format = "Y-M-D")
 
 # Make Time Periods Map
 time_per_df <- tibble(hour = c(seq(0, 23)), 
@@ -146,7 +147,7 @@ clean_raw <- function(input_df){
     mutate(hour = as.numeric(str_sub(as.character(time_stamp_string), 12, 13))) %>%
     mutate(day_of_week = weekdays(date)) %>%
     filter(day_of_week == "Tuesday" | day_of_week == "Wednesday" | day_of_week == "Thursday") %>%
-    filter(!is.holiday(date, holiday_dates)) %>%
+    filter(!is.holiday(date, all_holidays_dates)) %>%
     mutate(lanes = 8) %>%
     mutate(lanes = ifelse(is.na(flow_8), 7, lanes)) %>%
     mutate(lanes = ifelse(is.na(flow_7), 6, lanes)) %>%
@@ -257,7 +258,7 @@ sum_for_periods <- function(input_df) {
 
 #' Write out annual files for hourly data and time period data by district
 write_annual_district_to_disk <- function(out_dir, input_hour_df, input_period_df, input_meta_df, 
-                                          input_year_int, input_district_int){
+                                          input_year_int, input_district_int, input_period_all_months_df){
   
   join_meta_df <- input_meta_df %>%
     select(station   = ID, 
@@ -284,7 +285,7 @@ write_annual_district_to_disk <- function(out_dir, input_hour_df, input_period_d
                                join_meta_df,
                                by = c("station","district","route","direction","type")) %>%
     mutate(year = input_year_int)
-  
+    
   output_hour_filename   <- file.path(out_dir, sprintf("pems_hour_d%02d_%d.RDS", input_district_int, input_year_int))
   output_period_filename <- file.path(out_dir, sprintf("pems_period_d%02d_%d.RDS", input_district_int, input_year_int))
   
@@ -292,18 +293,28 @@ write_annual_district_to_disk <- function(out_dir, input_hour_df, input_period_d
   print(paste("Wrote",output_hour_filename))
   saveRDS(write_period_df, file = output_period_filename)
   print(paste("Wrote",output_period_filename))
+
+  if(!missing(input_period_all_months_df)) {
+    write_period_all_months_df <- left_join(input_period_all_months_df, 
+                               join_meta_df,
+                               by = c("station","district","route","direction","type")) %>%
+    mutate(year = input_year_int)
   
-  
+    output_period_all_months_filename <- file.path(out_dir, sprintf("pems_period_all_months_d%02d_%d.RDS", input_district_int, input_year_int))
+
+    saveRDS(write_period_all_months_df, file = output_period_all_months_filename)
+    print(paste("Wrote",output_period_all_months_filename))
+  }
 }
 
 # Reductions
-across_years_hour_df <- tibble()
-across_years_period_df <- tibble()
+across_years_hour_df <- tibble()# I don't think this is used
+across_years_period_df <- tibble()# I don't think this is used
 
 for (year in year_array) {
   
-  across_districts_hour_df <- tibble()
-  across_districts_period_df <- tibble()
+  across_districts_hour_df <- tibble()# I don't think this is used
+  across_districts_period_df <- tibble()# I don't think this is used
   
   for (district in district_array){
     
@@ -311,26 +322,48 @@ for (year in year_array) {
     meta_df <- consume_meta(SOURCE_DATA_DIR, district, year)
     
     across_months_df <- tibble()
-    
-    for (month in month_array){
-      
-      print(paste("Consuming Year", year, "Month", month, "for District", district))
-      
-      raw_df <- consume_raw(SOURCE_DATA_DIR, district, year, month)
-      clean_df <- clean_raw(raw_df)
-      across_months_df <- bind_rows(across_months_df, clean_df)
-      
-      remove(raw_df, clean_df)
-      
+    d4_across_months_df <- tibble()
+
+    for (month in all_months){
+      # wrap expression in try() to continue run in the event of data for months not being downloaded or available
+      try({
+
+        #filter for typical months
+        if (month %in% typical_travel_month_array){
+          print(paste("Consuming Year", year, "Month", month, "for District", district))
+          raw_df <- consume_raw(SOURCE_DATA_DIR, district, year, month)
+          clean_df <- clean_raw(raw_df)
+          across_months_df <- bind_rows(across_months_df, clean_df)
+        }
+        # compile all months data for D4 for years 2019 and onwards
+        if(year > 2018 & district == 4){
+          print(paste("Consuming Year", year, "Month", month, "for District", district))
+          raw_df <- consume_raw(SOURCE_DATA_DIR, district, year, month)
+          clean_df <- clean_raw(raw_df)
+          d4_across_months_df <- bind_rows(d4_across_months_df, clean_df)
+        }
+        
+        remove(raw_df, clean_df)
+      })
     } # month
     
     temp_df <- remove_suspect(across_months_df)
     annual_hourly_sum_df <- sum_for_hours(temp_df)
     annual_period_sum_df <- sum_for_periods(temp_df)
-    
+
+    # compile all months data for D4 for years 2019 and onwards
+    if(year > 2018 & district == 4){
+      temp_df_all_months <- remove_suspect(d4_across_months_df)
+      annual_period_all_months_sum_df <- sum_for_periods(temp_df_all_months)
+      write_annual_district_to_disk(OUTPUT_DATA_DIR, 
+                                  annual_hourly_sum_df, 
+                                  annual_period_sum_df, meta_df, 
+                                  year, district, annual_period_all_months_sum_df)
+    }else{    
     write_annual_district_to_disk(OUTPUT_DATA_DIR, 
                                   annual_hourly_sum_df, 
                                   annual_period_sum_df, meta_df, 
                                   year, district)
+    }
   } # district
 } # year
