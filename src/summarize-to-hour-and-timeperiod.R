@@ -18,9 +18,9 @@ OUTPUT_DATA_DIR <- "../data"     # hourly and period summaries (by district, yea
 
 # Parameters
 year_array     <- c(2018, 2019)
-district_array <- c(3, 4, 5, 10)  # d4 = MTC
+district_array <- c(3,4,5,10)  # d4 = MTC
 typical_travel_month_array      <- c(3, 4, 5, 9, 10, 11)
-all_months <- c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12)
+all_months <- c(1,2,3,4,5,6,7,8,9,10,11,12)
 
 # Share of sensor data that must be observed to be included
 MIN_PCT_OBS = 100
@@ -33,6 +33,7 @@ MAX_FLOW_ZERO_PLAUSIBLE = 150.0
 
 # Minimum number of days observed for estimates to be retained
 MIN_DAYS_OBSERVED = 15
+MIN_DAYS_OBSERVED_ONE_MONTH = 4
 
 # Relevant holidays database
 all_holidays_list  <- c('USNewYearsDay', 'USInaugurationDay', 'USMLKingsBirthday', 'USLincolnsBirthday', 'USWashingtonsBirthday', 'USMemorialDay', 'USIndependenceDay', 'USLaborDay', 'USColumbusDay', 'USElectionDay', 'USVeteransDay', 'USThanksgivingDay', 'USChristmasDay', 'USCPulaskisBirthday', 'USGoodFriday')
@@ -144,6 +145,7 @@ clean_raw <- function(input_df){
   df <- input_df %>%
     filter(pct_obs >= MIN_PCT_OBS) %>%
     mutate(date = as.Date(time_stamp_string, format = "%m/%d/%Y %H:%M:%S")) %>%
+    mutate(month = months(date)) %>%
     mutate(hour = as.numeric(str_sub(as.character(time_stamp_string), 12, 13))) %>%
     mutate(day_of_week = weekdays(date)) %>%
     filter(day_of_week == "Tuesday" | day_of_week == "Wednesday" | day_of_week == "Thursday") %>%
@@ -156,9 +158,8 @@ clean_raw <- function(input_df){
     mutate(lanes = ifelse(is.na(flow_4), 3, lanes)) %>%
     mutate(lanes = ifelse(is.na(flow_3), 2, lanes)) %>%
     mutate(lanes = ifelse(is.na(flow_2), 1, lanes)) %>%
-    select(date, day_of_week, station, district, route, direction, type, hour, 
+    select(date, month, day_of_week, station, district, route, direction, type, hour, 
            pct_obs, length, flow, speed, lanes, occupancy)
-  
   return(df)
 }
 
@@ -191,7 +192,6 @@ remove_suspect <- function(input_df, time_period_df){
                          suspect_stations_df, 
                          by = c("station", "district", "route", "direction", "type", "hour", "lanes")) %>%
     filter(!(suspect_station & flow < 1))
-  
   return(return_df)
   
 }
@@ -215,12 +215,11 @@ sum_for_hours <- function(input_df) {
               days_observed = n(),
               .groups = "drop") %>%
     filter(days_observed > MIN_DAYS_OBSERVED)
-  
   return(df)
 
 }
 
-#' Summarize given data frame to (station, district, route, direction, type, hour, lanes),
+#' Summarize given data frame to (station, district, route, direction, type, time period, lanes),
 #' filtering to only rows with days_observed > MIN_DAYS_OBSERVED
 #' Returns summary data frame
 sum_for_periods <- function(input_df) {
@@ -256,6 +255,28 @@ sum_for_periods <- function(input_df) {
   
 }
 
+#' Summarize given data frame to (station, district, route, direction, type, MONTH, hour, lanes)
+#' filtering to only rows with days_observed > MIN_DAYS_OBSERVED_ONE_MONTH
+#' Returns summary data frame
+sum_for_hours_all_months <- function(input_df) {
+  df <- input_df %>%
+    group_by(station, district, route, direction, type, hour, month, lanes) %>%
+    summarise(median_flow   = median(flow),      
+              avg_flow      = mean(flow),      
+              sd_flow       = sd(flow), 
+              median_speed  = median(speed),     
+              avg_speed     = mean(speed),     
+              sd_speed      = sd(speed),
+              median_occup  = median(occupancy), 
+              avg_occup     = mean(occupancy), 
+              sd_occupancy  = sd(occupancy),
+              days_observed = n(),
+              .groups = "drop") %>%
+    filter(days_observed > MIN_DAYS_OBSERVED_ONE_MONTH)
+  return(df)
+
+}
+
 #' Write out annual files for hourly data and time period data by district
 write_annual_district_to_disk <- function(out_dir, input_hour_df, input_period_df, input_meta_df, 
                                           input_year_int, input_district_int, input_period_all_months_df){
@@ -275,7 +296,6 @@ write_annual_district_to_disk <- function(out_dir, input_hour_df, input_period_d
            district  = as.integer(district),
            latitude  = as.double(latitude),
            longitude = as.double(longitude))
-  
   write_hour_df <- left_join(input_hour_df, 
                              join_meta_df,
                              by = c("station","district","route","direction","type")) %>%
@@ -299,7 +319,6 @@ write_annual_district_to_disk <- function(out_dir, input_hour_df, input_period_d
                                join_meta_df,
                                by = c("station","district","route","direction","type")) %>%
     mutate(year = input_year_int)
-  
     output_period_all_months_filename <- file.path(out_dir, sprintf("pems_period_all_months_d%02d_%d.RDS", input_district_int, input_year_int))
 
     saveRDS(write_period_all_months_df, file = output_period_all_months_filename)
@@ -325,17 +344,17 @@ for (year in year_array) {
     d4_across_months_df <- tibble()
 
     for (month in all_months){
-      # wrap expression in try() to continue run in the event of data for months not being downloaded or available
+      #' wrap expression in try() to continue run in the event of data for months not being downloaded or available
       try({
 
-        #filter for typical months
+        #' filter for typical months
         if (month %in% typical_travel_month_array){
           print(paste("Consuming Year", year, "Month", month, "for District", district))
           raw_df <- consume_raw(SOURCE_DATA_DIR, district, year, month)
           clean_df <- clean_raw(raw_df)
           across_months_df <- bind_rows(across_months_df, clean_df)
         }
-        # compile all months data for D4 for years 2019 and onwards
+        #' compile all months data for D4 for years 2019 and onwards
         if(year > 2018 & district == 4){
           print(paste("Consuming Year", year, "Month", month, "for District", district))
           raw_df <- consume_raw(SOURCE_DATA_DIR, district, year, month)
@@ -351,10 +370,10 @@ for (year in year_array) {
     annual_hourly_sum_df <- sum_for_hours(temp_df)
     annual_period_sum_df <- sum_for_periods(temp_df)
 
-    # compile all months data for D4 for years 2019 and onwards
+    #' compile all months data for D4 for years 2019 and onwards
     if(year > 2018 & district == 4){
       temp_df_all_months <- remove_suspect(d4_across_months_df)
-      annual_period_all_months_sum_df <- sum_for_periods(temp_df_all_months)
+      annual_period_all_months_sum_df <- sum_for_hours_all_months(temp_df_all_months)
       write_annual_district_to_disk(OUTPUT_DATA_DIR, 
                                   annual_hourly_sum_df, 
                                   annual_period_sum_df, meta_df, 

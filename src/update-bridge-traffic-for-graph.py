@@ -19,16 +19,16 @@ old_bridge_traffic = pd.read_csv(path_to_old_bridge_traffic)
 old_bridge_traffic['Bridge'] = old_bridge_traffic['Bridge'].replace('SFOBB', 'Sfobb')
 old_bridge_traffic['Bridge'] = old_bridge_traffic['Bridge'].replace('SM-Hayward', 'SMHay')
 
-# function to get week number of month
-def week_of_month(tgtdate): #contributor: lifeisstillgood, stack overflow
-    days_this_month = calendar.mdays[tgtdate.month]
-    for i in range(1, days_this_month):
-        d = datetime(tgtdate.year, tgtdate.month, i)
-        if d.day - d.weekday() > 0:
-            startdate = d
-            break
-    # now we canuse the modulo 7 appraoch
-    return (tgtdate - startdate).days //7 + 1
+# function to get week number of month // not used anymore
+# def week_of_month(tgtdate): #contributor: lifeisstillgood, stack overflow
+#     days_this_month = calendar.mdays[tgtdate.month]
+#     for i in range(1, days_this_month):
+#         d = datetime(tgtdate.year, tgtdate.month, i)
+#         if d.day - d.weekday() > 0:
+#             startdate = d
+#             break
+#     # now we canuse the modulo 7 appraoch
+#     return (tgtdate - startdate).days //7 + 1
 
 Bridges = ['Ant', 'Ben', 'Carq', 'Dumb', 'Rich', 'Sfobb', 'SMHay']
 
@@ -49,13 +49,13 @@ for bridge in Bridges:
 
 df = df.append(old_bridge_traffic)
 
-# filter out data for typical weekday, filter for available historic (2019) data
+# filter out data for typical weekday, want monthly average value based on tues/wed/thurs
 
-df = df[df.Week == 2]
-df = df[df.Week_Day == 'Wednesday']
-df = df[df.Month != 1]
-df = df[df.Month != 2]
-
+df = df[df.Week_Day != 'Sunday']
+df = df[df.Week_Day != 'Monday']
+df = df[df.Week_Day != 'Friday']
+df = df[df.Week_Day != 'Saturday']
+df = df.groupby(['Bridge', 'Year', "Month"])['Total_Count'].mean().reset_index()
 # pivot table
 
 pivot = df.pivot_table(values='Total_Count', index = 'Bridge', columns= ['Year', 'Month'], aggfunc= 'sum')
