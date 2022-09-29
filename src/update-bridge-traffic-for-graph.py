@@ -71,5 +71,11 @@ for year in [2020, 2021, 2022]:
 # clean df to get desired structure, then export csv
     
 df_out = df_out.dropna(axis='columns').reset_index()
+df_out = df_out.T.reset_index()
+dff = pd.DataFrame(columns=Bridges)
+for b in Bridges:
+    dff[b] = df_out.loc[:,b]
+dff = dff.reset_index()
+
 filename = 'graph percentages - ' + new_bridge_traffic.split(".")[0] + '.csv'
 df_out.to_csv(os.path.join(path,filename), header=True, index=False)
