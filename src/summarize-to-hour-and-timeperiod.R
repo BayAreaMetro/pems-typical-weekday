@@ -260,7 +260,7 @@ sum_for_periods <- function(input_df) {
 #' Returns summary data frame
 sum_for_hours_all_months <- function(input_df) {
   df <- input_df %>%
-    group_by(station, district, route, direction, type, hour, month, lanes) %>%
+    group_by(station, district, route, direction, type, hour, month, lanes, length) %>%
     summarise(median_flow   = median(flow),      
               avg_flow      = mean(flow),      
               sd_flow       = sd(flow), 

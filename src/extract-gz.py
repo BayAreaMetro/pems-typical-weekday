@@ -3,13 +3,16 @@
 import gzip
 import shutil
 import os
+from time import sleep
+from tqdm import tqdm
 # define files to be unzipped. Change as needed
-years = ['2019', '2020', '2021']
-months = ['01', '02', '06', '07', '08', '12']
+years = ['2023']
+months = [ '01']
 fileloc = 'M:Data\\Traffic\\PeMS'
 
 #loop through relevant year folders to extract the text files located in the 'original zipped' folder, then saving them in the year's folder
-for year in years:
+for year in tqdm(years):
+    sleep(3)
     for month in months:
         readpath = os.path.join(fileloc, year, 'original zipped')
         savepath = os.path.join(fileloc, year)
