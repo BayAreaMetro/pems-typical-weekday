@@ -14,6 +14,7 @@ To use the Tableau workbooks, first download the hourly or time period data file
 Column | Description
 ------ | -------------
 station | PeMS Station ID. An integer value that uniquely indenties the Station Metadata. Use this value to 'join' other PeMS clearinghouse files that contain Station Metadata.
+Vehicle.Class (only in truck files) | Vehicle classification. Possible values: 1 = 0-8 ft, 2 = 8-20 ft, 3 = 2 Axle, 4T SU, 4 = Bus, 5 = 2 Axle,6T SU, 6 = 3 Axle SU, 7 = 4+ Axle SU, 8 = < 4 Axle ST, 9 = 5 Axle ST, 10 = 6+ Axle ST, 11 = < 5 Axle MT, 12 = 6 Axle MT, 13 = 7+ Axle MT, 14 = User-Def, 15 = Unknown
 district | Caltrans district number.
 route | Route number.
 direction | Direction of travel. One of N, S, E, or W.
