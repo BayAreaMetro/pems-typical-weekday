@@ -17,9 +17,9 @@ SOURCE_DATA_DIR <- "M:/Data/Traffic/PeMS"  # raw data files are in here, in sub 
 OUTPUT_DATA_DIR <- "../data"     # hourly and period summaries (by district, year) written here
 
 # Parameters
-year_array     <- c(2022)
+year_array     <- c(2023)
 district_array <- c(4) # c(3, 4, 5, 10)  # d4 = MTC
-month_array    <- c(3, 4, 5, 9, 10, 11)
+month_array    <- c(3, 4, 5) # , 9, 10, 11)
 
 # Share of sensor data that must be observed to be included
 MIN_PCT_OBS = 100
