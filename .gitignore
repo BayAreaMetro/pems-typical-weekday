@@ -3,10 +3,10 @@
 .RData
 .DS_Store
 data/external/*
+# tableau workbook recovery file
+*.twbr
 # don't commit these since they're just concatenated versions of the district/year files
-data/pems_hour.Rdata
-data/pems_period.Rdata
-data/pems_hour.RDS
-data/pems_period.RDS
-data/pems_hour.csv
-data/pems_period.csv
+data/pems_hour.*
+data/pems_period.*
+data/pems_truck_hour.*
+data/pems_truck_period.*

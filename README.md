@@ -5,7 +5,7 @@ Generates typical weekday summaries of [Caltrans PeMS Data](http://pems.dot.ca.g
 
 <img src="./docs/DataFlowDiagram.png" width=800>
 
-The `Consume` directory processes a year's worth of data and then combines the annual summaries into a single database.  The data is available in the `pems-typical-weekday` folder [on Box](https://mtcdrive.box.com/v/pems-typical-weekday).  The data is presented via Tableau (see the `.Twb` files in the `Summaries` directory) both [hourly](https://public.tableau.com/profile/lmz8249#!/vizhome/PeMSTypicalWeekdayHour_0/SelectaStation) and by (groups of hours) [time period](https://public.tableau.com/profile/lmz8249#!/vizhome/PeMSTypicalWeekdayPeriod_0/SelectaStation).
+The scripts in `src` directory processes a year's worth of data and then combines the annual summaries into a single database.  The data is available in the `pems-typical-weekday` folder [on Box](https://mtcdrive.box.com/v/pems-typical-weekday).  The data is presented via Tableau (see the `.twb` files in the `Summaries` directory) both [**hourly dashboard**](https://public.tableau.com/app/profile/bayareametro/viz/PeMSTypicalWeekday-Hourly/StationFlows) and by (groups of hours) [**time period dashboard**](https://public.tableau.com/app/profile/bayareametro/viz/PeMSTypicalWeekday-ByTimePeriod/StationFlows).
 
 To use the Tableau workbooks, first download the hourly or time period data files from the `pems-typical-weekday` folder [here](https://mtcdrive.box.com/v/pems-typical-weekday).  Then point the Tableau workbooks to local copies of the CSV file, rather than the data extract/csv my files point to (e.g., `M:\Data\Traffic\PeMS\pems_period.tde` or `D:/files/Box Sync/Share Data/pems-typical-weekday/pems_period.csv`).
 
@@ -14,6 +14,7 @@ To use the Tableau workbooks, first download the hourly or time period data file
 Column | Description
 ------ | -------------
 station | PeMS Station ID. An integer value that uniquely indenties the Station Metadata. Use this value to 'join' other PeMS clearinghouse files that contain Station Metadata.
+Vehicle.Class (only in truck files) | Vehicle classification. Possible values: 1 = 0-8 ft, 2 = 8-20 ft, 3 = 2 Axle, 4T SU, 4 = Bus, 5 = 2 Axle,6T SU, 6 = 3 Axle SU, 7 = 4+ Axle SU, 8 = < 4 Axle ST, 9 = 5 Axle ST, 10 = 6+ Axle ST, 11 = < 5 Axle MT, 12 = 6 Axle MT, 13 = 7+ Axle MT, 14 = User-Def, 15 = Unknown
 district | Caltrans district number.
 route | Route number.
 direction | Direction of travel. One of N, S, E, or W.
