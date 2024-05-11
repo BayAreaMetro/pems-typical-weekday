@@ -1,15 +1,48 @@
+USAGE <- "
+ Pass --h for help on usage.
+
+ Aggregates PeMS downloaded data files into monthly and annual summaries.
+ Given a year (or multiple years) and Caltrans district (or multiple districts),
+ this script does the following: 
+  1) Reads the meta data for the district/year
+  2) For all months, reads the station_hour data 
+     from M:/Data/Traffic/PeMS/[year]/d[district]_text_station_hour_[year]_[month].txt
+  3) Filters to only rows with pct_obs >= MIN_PCT_OBS
+     Filters to only typical weekdays (Tuesday, Wednesay and Thursday),
+     Filters out holidays
+  4) Flags/filters some rows as suspect if min_flow==0 and max_flow > MAX_FLOW_ZERO_PLAUSIBLE
+
+  Writes the following output files:
+  1) ../data/pems_hour_d[district]_[year].RDS
+  2) ../data/pems_period_d[district]_[year].RDS
+  3) ../data/pems_hour_month_d[district]_[year].RDS
+  4) M:/Data/Traffic/PeMS/suspect_stations_debug/suspect_stations_[year]_[district]_[allmonths,typicalmonths].csv
+
+  All three files have columns:
+     station, district, route, direction, type, 
+     [hour|time_period|hour,month,hour] -- these columns are present for output files 1-4) respectively
+     lanes,
+     [median,avg,sd]_flow
+     [median,avg,sd]_speed
+     [median,avg,sd]_occup
+     days_observed
+     state_pm, abs_pm, latitutde, longitude
+     year
+"
 
 # Overhead
-packages_vector <- c("tidyverse",
-                     "chron",
-                     "timeDate")
+packages_vector <- c(
+  "argparser",
+  "tidyverse",
+  "chron",
+  "timeDate")
 
 need_to_install <- packages_vector[!(packages_vector %in% installed.packages()[,"Package"])]
 
 if (length(need_to_install)) install.packages(need_to_install)
 
 for (package in packages_vector){
-  library(package, character.only = TRUE)
+  suppressMessages(library(package, character.only = TRUE))
 }
 
 # I/O
@@ -17,9 +50,15 @@ SOURCE_DATA_DIR <- "M:/Data/Traffic/PeMS"  # raw data files are in here, in sub 
 OUTPUT_DATA_DIR <- "../data"     # hourly and period summaries (by district, year) written here
 
 # Parameters
-year_array     <- c(2018, 2019)
-district_array <- c(3,4,5,10)  # d4 = MTC
-typical_travel_month_array      <- c(3, 4, 5, 9, 10, 11)
+# year(s) and district(s) are now command-line arguments
+argparser <- arg_parser(USAGE)
+argparser <- add_argument(argparser, "--year",     help="Years to process",     type="numeric", nargs=Inf)
+argparser <- add_argument(argparser, "--district", help="Districts to process", type="numeric", nargs=Inf)
+
+# parse the command line arguments
+argv <- parse_args(argparser)
+
+typical_travel_month_array <- c(3, 4, 5, 9, 10, 11)
 all_months <- c(1,2,3,4,5,6,7,8,9,10,11,12)
 
 # Share of sensor data that must be observed to be included
@@ -40,18 +79,18 @@ all_holidays_list  <- c('USNewYearsDay', 'USInaugurationDay', 'USMLKingsBirthday
 all_holidays_dates <- dates(as.character(holiday(2000:2025, all_holidays_list)), format = "Y-M-D")
 
 # Make Time Periods Map
-time_per_df <- tibble(hour = c(seq(0, 23)), 
-                      time_period = c(rep("EV", 3),
-                                      rep("EA", 3),
-                                      rep("AM", 4),
-                                      rep("MD", 5),
-                                      rep("PM", 4),
-                                      rep("EV", 5)))
+HOUR_TO_TIMEPERIOD_DF <- 
+  tibble(hour = c(seq(0, 23)), 
+  time_period = c(rep("EV", 3),
+                  rep("EA", 3),
+                  rep("AM", 4),
+                  rep("MD", 5),
+                  rep("PM", 4),
+                  rep("EV", 5)))
 
-time_per_counts_df <- select(as.data.frame(table(time_per_df$time_period)), 
+TIMEPERIOD_COUNTS_DF <- select(as.data.frame(table(HOUR_TO_TIMEPERIOD_DF$time_period)), 
                              time_period = Var1, 
                              time_period_count = Freq)
-
 # Methods ----------------------------------------------------------------------
 
 #' Check for meta data file, read it and return as a dataframe
@@ -63,6 +102,7 @@ consume_meta <- function(data_dir, district, year) {
   stopifnot(length(meta_file_vector) > 0)
   meta_filename <- file.path(data_dir, year, meta_file_vector[1])
   df <- read_delim(meta_filename, delim = "\t", col_types = cols(.default = col_character()))
+  print(paste("Read metadata from", meta_filename))
   # print(problems(df))
   return(df)
 }
@@ -130,6 +170,7 @@ consume_raw <- function(data_dir, district, year, month){
   
   filename <- paste0("d", district_string, "_text_station_hour_", year, "_", month_string, ".txt")
   df <- read_csv(file.path(data_dir, year, filename), col_names = HOUR_COLUMN_NAMES, col_types = HOUR_COLUMN_TYPES)
+  print(paste("Read",nrow(df),"rows from",file.path(data_dir, year, filename)))
   # print(problems(df))
   return(df)
 }
@@ -165,30 +206,37 @@ clean_raw <- function(input_df){
 
 #' Flag some rows as "suspect' if there are flows that exceed MAX_FLOW_ZERO_PLAUSIBLE
 #' when aggregated to station/hour and filter them out
-remove_suspect <- function(input_df, time_period_df){
-  
-  df <- left_join(input_df, time_per_df, by = c("hour"))
-  
-  sum_hour_df <- df %>%
-    group_by(station, district, route, direction, type, hour, lanes) %>%
-    summarise(median_flow  = median(flow),      
-              avg_flow     = mean(flow),      
-              sd_flow      = sd(flow), 
-              max_flow     = max(flow), 
-              min_flow     = min(flow), 
-              median_speed = median(speed),     
-              avg_speed    = mean(speed),     
+remove_suspect <- function(input_df, suffix){
+
+  sum_hour_df <- input_df %>%
+    group_by(station, district, route, direction, type, hour, lanes, 
+            # meta data
+            state_pm, abs_pm, latitude, longitude) %>%
+    summarise(median_flow  = median(flow),
+              avg_flow     = mean(flow),
+              sd_flow      = sd(flow),
+              max_flow     = max(flow),
+              min_flow     = min(flow),
+              median_speed = median(speed),
+              avg_speed    = mean(speed),
               sd_speed     = sd(speed),
-              median_occup = median(occupancy), 
+              median_occup = median(occupancy),
               avg_occup    = mean(occupancy), 
               sd_occupancy = sd(occupancy),
               .groups      = "drop")
   
   suspect_stations_df <- sum_hour_df %>%
-    mutate(suspect_station = ifelse(max_flow > MAX_FLOW_ZERO_PLAUSIBLE & min_flow == 0L, TRUE, FALSE)) %>%
+    mutate(suspect_station = ifelse(max_flow > MAX_FLOW_ZERO_PLAUSIBLE & min_flow == 0L, TRUE, FALSE))
+
+  # write these for debugging
+  suspect_file <- file.path(SOURCE_DATA_DIR, "suspect_stations_debug", paste0("suspect_stations_",suffix,".csv"))
+  write.csv(filter(suspect_stations_df, suspect_station==TRUE), suspect_file, row.names=FALSE)
+  print(paste("Wrote",nrow(filter(suspect_stations_df, suspect_station==TRUE)),"rows to",suspect_file))
+
+  suspect_stations_df <- suspect_stations_df %>%
     select(station, district, route, direction, type, hour, lanes, suspect_station)
   
-  return_df <- left_join(df, 
+  return_df <- left_join(input_df, 
                          suspect_stations_df, 
                          by = c("station", "district", "route", "direction", "type", "hour", "lanes")) %>%
     filter(!(suspect_station & flow < 1))
@@ -203,14 +251,14 @@ sum_for_hours <- function(input_df) {
   
   df <- input_df %>%
     group_by(station, district, route, direction, type, hour, lanes) %>%
-    summarise(median_flow   = median(flow),      
-              avg_flow      = mean(flow),      
-              sd_flow       = sd(flow), 
-              median_speed  = median(speed),     
-              avg_speed     = mean(speed),     
+    summarise(median_flow   = median(flow),
+              avg_flow      = mean(flow),
+              sd_flow       = sd(flow),
+              median_speed  = median(speed),
+              avg_speed     = mean(speed),
               sd_speed      = sd(speed),
-              median_occup  = median(occupancy), 
-              avg_occup     = mean(occupancy), 
+              median_occup  = median(occupancy),
+              avg_occup     = mean(occupancy),
               sd_occupancy  = sd(occupancy),
               days_observed = n(),
               .groups = "drop") %>%
@@ -224,7 +272,7 @@ sum_for_hours <- function(input_df) {
 #' Returns summary data frame
 sum_for_periods <- function(input_df) {
   
-  df <- input_df %>%
+  df <- left_join(input_df, HOUR_TO_TIMEPERIOD_DF, by=c("hour")) %>%
     mutate(speed_flow = speed * flow) %>%
     mutate(occup_flow = occupancy * flow) %>%
     group_by(date, station, district, route, direction, type, time_period, lanes) %>%
@@ -233,7 +281,7 @@ sum_for_periods <- function(input_df) {
               occup_flow = sum(occup_flow), 
               hours_observed = n(),
               .groups = "drop") %>%
-    left_join(., time_per_counts_df, by = c("time_period")) %>%
+    left_join(., TIMEPERIOD_COUNTS_DF, by = c("time_period")) %>%
     filter(hours_observed == time_period_count) %>%
     mutate(speed = ifelse(flow > 0, speed_flow / flow, DEFAULT_SPEED)) %>%
     mutate(occupancy = ifelse(flow > 0, occup_flow / flow, 0.0)) %>%
@@ -258,7 +306,7 @@ sum_for_periods <- function(input_df) {
 #' Summarize given data frame to (station, district, route, direction, type, MONTH, hour, lanes)
 #' filtering to only rows with days_observed > MIN_DAYS_OBSERVED_ONE_MONTH
 #' Returns summary data frame
-sum_for_hours_all_months <- function(input_df) {
+sum_for_hours_by_month <- function(input_df) {
   df <- input_df %>%
     group_by(station, district, route, direction, type, hour, month, lanes, length) %>%
     summarise(median_flow   = median(flow),      
@@ -277,11 +325,36 @@ sum_for_hours_all_months <- function(input_df) {
 
 }
 
-#' Write out annual files for hourly data and time period data by district
-write_annual_district_to_disk <- function(out_dir, input_hour_df, input_period_df, input_meta_df, 
-                                          input_year_int, input_district_int, input_period_all_months_df){
-  
-  join_meta_df <- input_meta_df %>%
+for (year in argv$year) {
+
+  for (district in argv$district){
+    
+    # read meta data
+    meta_df <- consume_meta(SOURCE_DATA_DIR, district, year)
+    
+    typical_months_df <- tibble()
+    all_months_df <- tibble()
+
+    for (month in all_months){
+      #' wrap expression in try() to continue run in the event of data for months not being downloaded or available
+      try({
+
+        # print(paste("Consuming Year", year, "Month", month, "for District", district))
+        raw_df <- consume_raw(SOURCE_DATA_DIR, district, year, month)
+        clean_df <- clean_raw(raw_df)
+
+        # keep all months
+        all_months_df <- bind_rows(all_months_df, clean_df)
+        # typical months
+        if (month %in% typical_travel_month_array){
+          typical_months_df <- bind_rows(typical_months_df, clean_df)
+        }
+        remove(raw_df, clean_df)
+      })
+    } # month
+    
+    # join with metadata
+    join_meta_df <- meta_df %>%
     select(station   = ID, 
            district  = District, 
            route     = Fwy, 
@@ -296,93 +369,39 @@ write_annual_district_to_disk <- function(out_dir, input_hour_df, input_period_d
            district  = as.integer(district),
            latitude  = as.double(latitude),
            longitude = as.double(longitude))
-  write_hour_df <- left_join(input_hour_df, 
-                             join_meta_df,
-                             by = c("station","district","route","direction","type")) %>%
-    mutate(year = input_year_int)
-  
-  write_period_df <- left_join(input_period_df, 
-                               join_meta_df,
-                               by = c("station","district","route","direction","type")) %>%
-    mutate(year = input_year_int)
     
-  output_hour_filename   <- file.path(out_dir, sprintf("pems_hour_d%02d_%d.RDS", input_district_int, input_year_int))
-  output_period_filename <- file.path(out_dir, sprintf("pems_period_d%02d_%d.RDS", input_district_int, input_year_int))
-  
-  saveRDS(write_hour_df, file = output_hour_filename)
-  print(paste("Wrote",output_hour_filename))
-  saveRDS(write_period_df, file = output_period_filename)
-  print(paste("Wrote",output_period_filename))
-
-  if(!missing(input_period_all_months_df)) {
-    write_period_all_months_df <- left_join(input_period_all_months_df, 
-                               join_meta_df,
-                               by = c("station","district","route","direction","type")) %>%
-    mutate(year = input_year_int)
-    output_period_all_months_filename <- file.path(out_dir, sprintf("pems_period_all_months_d%02d_%d.RDS", input_district_int, input_year_int))
-
-    saveRDS(write_period_all_months_df, file = output_period_all_months_filename)
-    print(paste("Wrote",output_period_all_months_filename))
-  }
-}
-
-# Reductions
-across_years_hour_df <- tibble()# I don't think this is used
-across_years_period_df <- tibble()# I don't think this is used
-
-for (year in year_array) {
-  
-  across_districts_hour_df <- tibble()# I don't think this is used
-  across_districts_period_df <- tibble()# I don't think this is used
-  
-  for (district in district_array){
+    typical_months_df <- left_join(
+      typical_months_df,
+      join_meta_df,
+      by = c("station","district","route","direction","type"))
     
-    # read meta data
-    meta_df <- consume_meta(SOURCE_DATA_DIR, district, year)
+    all_months_df <- left_join(
+      all_months_df,
+      join_meta_df,
+      by = c("station","district","route","direction","type"))
+
+    # summaries for typical months -- by hour and by period
+    typical_months_df <- remove_suspect(typical_months_df, sprintf("%d_typical", year))
+    annual_hourly_sum_df <- sum_for_hours(typical_months_df)
+    annual_period_sum_df <- sum_for_periods(typical_months_df)
+
+    # summary for all months -- by hour & month
+    all_months_df <- remove_suspect(all_months_df, sprintf("%d_all", year))
+    annual_hourly_sum_by_month_df <- sum_for_hours_by_month(all_months_df)
+
+    # write them
+    output_hour_filename          <- file.path(OUTPUT_DATA_DIR, sprintf("pems_hour_d%02d_%d.RDS", district, year))
+    output_period_filename        <- file.path(OUTPUT_DATA_DIR, sprintf("pems_period_d%02d_%d.RDS", district, year))
+    output_hour_by_month_filename <- file.path(OUTPUT_DATA_DIR, sprintf("pems_hour_by_month_d%02d_%d.RDS", district, year))
+
+    saveRDS(annual_hourly_sum_df, file = output_hour_filename)
+    print(paste("Wrote",output_hour_filename))
+  
+    saveRDS(annual_period_sum_df, file = output_period_filename)
+    print(paste("Wrote",output_period_filename))
     
-    across_months_df <- tibble()
-    d4_across_months_df <- tibble()
+    saveRDS(annual_hourly_sum_by_month_df, file = output_hour_by_month_filename)
+    print(paste("Wrote",output_hour_by_month_filename))
 
-    for (month in all_months){
-      #' wrap expression in try() to continue run in the event of data for months not being downloaded or available
-      try({
-
-        #' filter for typical months
-        if (month %in% typical_travel_month_array){
-          print(paste("Consuming Year", year, "Month", month, "for District", district))
-          raw_df <- consume_raw(SOURCE_DATA_DIR, district, year, month)
-          clean_df <- clean_raw(raw_df)
-          across_months_df <- bind_rows(across_months_df, clean_df)
-        }
-        #' compile all months data for D4 for years 2019 and onwards
-        if(year > 2018 & district == 4){
-          print(paste("Consuming Year", year, "Month", month, "for District", district))
-          raw_df <- consume_raw(SOURCE_DATA_DIR, district, year, month)
-          clean_df <- clean_raw(raw_df)
-          d4_across_months_df <- bind_rows(d4_across_months_df, clean_df)
-        }
-        
-        remove(raw_df, clean_df)
-      })
-    } # month
-    
-    temp_df <- remove_suspect(across_months_df)
-    annual_hourly_sum_df <- sum_for_hours(temp_df)
-    annual_period_sum_df <- sum_for_periods(temp_df)
-
-    #' compile all months data for D4 for years 2019 and onwards
-    if(year > 2018 & district == 4){
-      temp_df_all_months <- remove_suspect(d4_across_months_df)
-      annual_period_all_months_sum_df <- sum_for_hours_all_months(temp_df_all_months)
-      write_annual_district_to_disk(OUTPUT_DATA_DIR, 
-                                  annual_hourly_sum_df, 
-                                  annual_period_sum_df, meta_df, 
-                                  year, district, annual_period_all_months_sum_df)
-    }else{    
-    write_annual_district_to_disk(OUTPUT_DATA_DIR, 
-                                  annual_hourly_sum_df, 
-                                  annual_period_sum_df, meta_df, 
-                                  year, district)
-    }
   } # district
 } # year
