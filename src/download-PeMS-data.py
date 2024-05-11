@@ -14,16 +14,16 @@ Requires chromedriver.exe (from https://chromedriver.chromium.org/downloads) to 
 Tested with python-3.10.6
 """
 
-import calendar, getpass, os, shutil, sys, time
+import calendar, getpass, gzip, os, pathlib, shutil, sys, time
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.common.by import By
 
 # data files are saved here, in subfolder '[yyyy]\original zipped'
-DESTINATION_DIR = 'M:\\Data\\Traffic\\PeMS'
+DESTINATION_DIR = pathlib.Path('M:\\Data\\Traffic\\PeMS')
 # data files are downloaded here but then moved into the DESTINATION_DIR
-DOWNLOADS_DIR   = 'C:\\Users\\{}\\Downloads'.format(os.getenv('USERNAME'))
+DOWNLOADS_DIR   = pathlib.Path(f'C:\\Users\\{os.getenv("USERNAME")}\\Downloads')
 
 # query user for PeMS username and password
 pems_username = input('To login to PeMS, please enter your PeMS username: ')
@@ -116,26 +116,43 @@ while True:
                     element_name = 'all_text_tmg_trucks_hour_{:d}_{:02d}_{:02d}.txt.gz'.format(int(year), month, mday)
 
                 # first check if file is already there
-                dest_file = os.path.join(DESTINATION_DIR, year, 'original zipped', element_name)
-                if os.path.exists(dest_file):
-                    print('File {} exists -- skipping'.format(dest_file))
+                unzip_dir = DESTINATION_DIR / year
+                zip_dir   = unzip_dir / 'original_zipped'
+                zip_file = zip_dir / element_name
+                if os.path.exists(zip_file):
+                    print('File {} exists -- skipping'.format(zip_file))
                     continue
 
-                print('Looking for element_name: {}'.format(element_name), end='') # new newline
+                # mkdir if needed
+                if not os.path.exists(zip_dir): os.mkdir(zip_dir)
+
+                print('Looking for element_name: {}'.format(element_name))
                 try:
                     driver.find_element('link text', element_name).click()
-                    # wait for download
-                    time.sleep(10)
-
-                    # move the file into place
-                    src_file = os.path.join(DOWNLOADS_DIR, element_name)
-                    if os.path.exists(src_file):
-                        shutil.move(src_file, dest_file)
-                        print(' - downloaded and saved')
-
                 except Exception as e:
                     print('')
                     print('Could not find element {}'.format(element_name))
+                    continue
+
+                # wait for download
+                src_file = os.path.join(DOWNLOADS_DIR, element_name)
+                print(f"  Waiting for download {src_file}")
+
+                while (not os.path.exists(src_file)):
+                    time.sleep(2)
+
+                # move the file into place
+                shutil.move(src_file, zip_file)
+                print(f'  Moved to {zip_file}')
+
+                # don't do this for truck; summarize-census-trucks-hour.R uses the gzipped files directly
+                if pems_mode == 'tmg_trucks_hour': continue
+                
+                unzip_file = unzip_dir / element_name.replace(".gz","")
+                with gzip.open(zip_file, 'rb') as f_in:
+                    with open(unzip_file, 'wb') as f_out:
+                        shutil.copyfileobj(f_in, f_out)
+                print(f'  Unzipped to {unzip_file}')
 
         print('Completed year {}'.format(year))
     driver.close()
