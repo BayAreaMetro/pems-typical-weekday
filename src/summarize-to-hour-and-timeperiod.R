@@ -287,7 +287,8 @@ sum_for_periods <- function(input_df) {
     filter(hours_observed == time_period_count) %>%
     mutate(speed = ifelse(flow > 0, speed_flow / flow, DEFAULT_SPEED)) %>%
     mutate(occupancy = ifelse(flow > 0, occup_flow / flow, 0.0)) %>%
-    group_by(station, district, route, direction, type, time_period, lanes) %>%
+    group_by(station, district, route, direction, type, time_period, lanes,
+             state_pm, abs_pm, latitude, longitude, year) %>%
     summarise(median_flow = median(flow),      
               avg_flow = mean(flow),      
               sd_flow = sd(flow), 
