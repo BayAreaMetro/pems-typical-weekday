@@ -250,7 +250,8 @@ remove_suspect <- function(input_df, suffix){
 sum_for_hours <- function(input_df) {
   
   df <- input_df %>%
-    group_by(station, district, route, direction, type, hour, lanes) %>%
+    group_by(station, district, route, direction, type, hour, lanes, 
+             state_pm, abs_pm, latitude, longitude, year) %>%
     summarise(median_flow   = median(flow),
               avg_flow      = mean(flow),
               sd_flow       = sd(flow),
@@ -275,7 +276,8 @@ sum_for_periods <- function(input_df) {
   df <- left_join(input_df, HOUR_TO_TIMEPERIOD_DF, by=c("hour")) %>%
     mutate(speed_flow = speed * flow) %>%
     mutate(occup_flow = occupancy * flow) %>%
-    group_by(date, station, district, route, direction, type, time_period, lanes) %>%
+    group_by(date, station, district, route, direction, type, time_period, lanes,
+             state_pm, abs_pm, latitude, longitude, year) %>%
     summarise(flow = sum(flow), 
               speed_flow = sum(speed_flow), 
               occup_flow = sum(occup_flow), 
@@ -308,7 +310,8 @@ sum_for_periods <- function(input_df) {
 #' Returns summary data frame
 sum_for_hours_by_month <- function(input_df) {
   df <- input_df %>%
-    group_by(station, district, route, direction, type, hour, month, lanes, length) %>%
+    group_by(station, district, route, direction, type, hour, month, lanes, length, 
+             abs_pm, latitude, longitude, year) %>%
     summarise(median_flow   = median(flow),      
               avg_flow      = mean(flow),      
               sd_flow       = sd(flow), 
@@ -368,7 +371,8 @@ for (year in argv$year) {
            route     = as.integer(route),
            district  = as.integer(district),
            latitude  = as.double(latitude),
-           longitude = as.double(longitude))
+           longitude = as.double(longitude),
+           year      = year)
     
     typical_months_df <- left_join(
       typical_months_df,
@@ -389,6 +393,10 @@ for (year in argv$year) {
     all_months_df <- remove_suspect(all_months_df, sprintf("%d_all", year))
     annual_hourly_sum_by_month_df <- sum_for_hours_by_month(all_months_df)
 
+    # reorder columns to be consistent with before
+    annual_hourly_sum_df <- relocate(annual_hourly_sum_df, state_pm, abs_pm, latitude, longitude, year, .after = last_col())
+    annual_period_sum_df <- relocate(annual_period_sum_df, state_pm, abs_pm, latitude, longitude, year, .after = last_col())
+  
     # write them
     output_hour_filename          <- file.path(OUTPUT_DATA_DIR, sprintf("pems_hour_d%02d_%d.RDS", district, year))
     output_period_filename        <- file.path(OUTPUT_DATA_DIR, sprintf("pems_period_d%02d_%d.RDS", district, year))
