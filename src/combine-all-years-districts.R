@@ -37,7 +37,7 @@ for(prefix in prefix_list) {
 
     print(sprintf('Read %s with %6d rows; total rows for all years: %8d', 
                   file_name, nrow(this_df), nrow(tibble_for_prefix)))
-    # continue in the loop
+    # print(table(tibble_for_prefix$year, useNA="always"))
   }
 
   output_file <- file.path(OUTPUT_DATA_DIR, prefix)
@@ -48,6 +48,9 @@ for(prefix in prefix_list) {
   else if (endsWith(prefix,'_')) {
      output_file <- substr(output_file, 0, nchar(output_file)-1)
   }
+
+  print("table for year:")
+  print(table(tibble_for_prefix$year, useNA="always"))
 
   # these are big -- do not commit!
   # Write as Rdata (for tableau)
