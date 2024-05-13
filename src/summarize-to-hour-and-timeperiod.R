@@ -375,12 +375,13 @@ for (year in argv$year) {
            longitude = as.double(longitude),
            year      = year)
     
-    typical_months_df <- left_join(
+    # inner_join because metadata is required
+    typical_months_df <- inner_join(
       typical_months_df,
       join_meta_df,
       by = c("station","district","route","direction","type"))
     
-    all_months_df <- left_join(
+    all_months_df <- inner_join(
       all_months_df,
       join_meta_df,
       by = c("station","district","route","direction","type"))
