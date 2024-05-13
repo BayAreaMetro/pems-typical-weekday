@@ -1333,6 +1333,7 @@
             <column aggregation='Avg' caption='Longitude' datatype='real' name='[longitude]' role='measure' semantic-role='[Geographical].[Longitude]' type='quantitative' />
             <column-instance column='[Calculation_262897638090821633]' derivation='None' name='[none:Calculation_262897638090821633:nk]' pivot='key' type='nominal' />
             <column-instance column='[district]' derivation='None' name='[none:district:ok]' pivot='key' type='ordinal' />
+            <column-instance column='[type]' derivation='None' name='[none:type:nk]' pivot='key' type='nominal' />
             <column-instance column='[year]' derivation='None' name='[none:year:ok]' pivot='key' type='ordinal' />
             <column aggregation='Sum' caption='Route' datatype='integer' name='[route]' role='dimension' type='ordinal' />
             <column aggregation='Sum' caption='Station' datatype='integer' name='[station]' role='dimension' type='ordinal' />
@@ -1493,11 +1494,15 @@
               <lod column='[textscan.42002.501055717592].[usr:Calculation_371828452927066112:qk]' />
               <lod column='[textscan.42002.501055717592].[usr:Calculation_371828452927541249:qk]' />
               <lod column='[textscan.42002.501055717592].[usr:First Year (copy)_371828452927635458:qk]' />
+              <lod column='[textscan.42002.501055717592].[none:type:nk]' />
             </encodings>
             <customized-tooltip>
               <formatted-text>
                 <run fontcolor='#787878'>Station Description:&#9;</run>
                 <run bold='true'><![CDATA[<[textscan.42002.501055717592].[none:Calculation_262897638090821633:nk]>]]></run>
+                <run>Æ&#10;</run>
+                <run fontcolor='#787878'>Station Type:&#9;</run>
+                <run bold='true'><![CDATA[<[textscan.42002.501055717592].[none:type:nk]>]]></run>
                 <run>Æ&#10;</run>
                 <run fontcolor='#787878'>Years Available:&#9;</run>
                 <run bold='true' fontcolor='#333333'><![CDATA[<[textscan.42002.501055717592].[usr:Calculation_371828452927541249:qk]>-<[textscan.42002.501055717592].[usr:First Year (copy)_371828452927635458:qk]>]]></run>
@@ -1760,90 +1765,88 @@
       <zones>
         <zone h='100000' id='4' type-v2='layout-basic' w='100000' x='0' y='0'>
           <zone h='98336' id='46' param='horz' type-v2='layout-flow' w='99064' x='468' y='832'>
-            <zone h='98336' id='32' param='horz' type-v2='layout-flow' w='99064' x='468' y='832'>
-              <zone h='98336' id='11' type-v2='layout-basic' w='99064' x='468' y='832'>
-                <zone h='98336' id='7' param='horz' type-v2='layout-flow' w='99064' x='468' y='832'>
-                  <zone h='98336' id='5' type-v2='layout-basic' w='99064' x='468' y='832'>
-                    <zone h='91236' id='3' name='Station Map' w='49528' x='468' y='832'>
-                      <zone-style>
-                        <format attr='border-color' value='#000000' />
-                        <format attr='border-style' value='none' />
-                        <format attr='border-width' value='0' />
-                        <format attr='margin' value='4' />
-                      </zone-style>
-                    </zone>
-                    <zone h='41863' id='10' name='Station Flow' w='49536' x='49996' y='14716'>
-                      <zone-style>
-                        <format attr='border-color' value='#000000' />
-                        <format attr='border-style' value='none' />
-                        <format attr='border-width' value='0' />
-                        <format attr='margin' value='4' />
-                      </zone-style>
-                    </zone>
-                    <zone h='42589' id='15' name='Station Speed' w='49536' x='49996' y='56579'>
-                      <zone-style>
-                        <format attr='border-color' value='#000000' />
-                        <format attr='border-style' value='none' />
-                        <format attr='border-width' value='0' />
-                        <format attr='margin' value='4' />
-                      </zone-style>
-                    </zone>
-                    <zone forceUpdate='true' h='13884' id='16' type-v2='text' w='36703' x='62829' y='832'>
-                      <formatted-text>
-                        <run fontsize='8'>This visualization represents typical weekday summaries of Caltrans PeMS Data (</run>
-                        <run auto-url='true' fontsize='8' hyperlink='tabdoc:load-url url=&amp;quot;https://pems.dot.ca.gov/&amp;quot;'>https://pems.dot.ca.gov/</run>
-                        <run fontsize='8'>).  For transportation planning purposes, a &quot;typical weekday&quot; is defined as a </run>
-                        <run bold='true' fontsize='8'>Tuesday</run>
-                        <run fontsize='8'>, </run>
-                        <run bold='true' fontsize='8'>Wednesday</run>
-                        <run fontsize='8'>, or </run>
-                        <run bold='true' fontsize='8'>Thursday</run>
-                        <run fontsize='8'> in the months of </run>
-                        <run bold='true' fontsize='8'>March</run>
-                        <run fontsize='8'>, </run>
-                        <run bold='true' fontsize='8'>April</run>
-                        <run fontsize='8'>, </run>
-                        <run bold='true' fontsize='8'>May</run>
-                        <run fontsize='8'>, </run>
-                        <run bold='true' fontsize='8'>September</run>
-                        <run fontsize='8'>, </run>
-                        <run bold='true' fontsize='8'>October</run>
-                        <run fontsize='8'> and </run>
-                        <run bold='true' fontsize='8'>November</run>
-                        <run fontsize='8'>, not including holidays.</run>
-                        <run>Æ&#10;&#10;</run>
-                        <run fontsize='8'>Underlying data last updated: </run>
-                        <run bold='true' fontsize='8'>2024-05-13</run>
-                        <run>Æ&#10;</run>
-                        <run fontsize='8'>Data Files: </run>
-                        <run auto-url='true' fontsize='8' hyperlink='tabdoc:load-url url=&amp;quot;https://mtcdrive.box.com/v/pems-typical-weekday&amp;quot;'>https://mtcdrive.box.com/v/pems-typical-weekday</run>
-                        <run>Æ&#10;</run>
-                        <run fontsize='8'>Processing Scripts: </run>
-                        <run auto-url='true' fontsize='8' hyperlink='tabdoc:load-url url=&amp;quot;https://github.com/BayAreaMetro/pems-typical-weekday&amp;quot;'>https://github.com/BayAreaMetro/pems-typical-weekday</run>
-                      </formatted-text>
-                      <zone-style>
-                        <format attr='border-color' value='#000000' />
-                        <format attr='border-style' value='none' />
-                        <format attr='border-width' value='0' />
-                        <format attr='margin' value='4' />
-                      </zone-style>
-                    </zone>
-                    <zone h='13884' id='14' name='Station Flow' pane-specification-id='0' param='[textscan.42002.501055717592].[none:time_period:nk]' type-v2='color' w='12833' x='49996' y='832'>
-                      <zone-style>
-                        <format attr='border-color' value='#000000' />
-                        <format attr='border-style' value='none' />
-                        <format attr='border-width' value='0' />
-                        <format attr='margin' value='4' />
-                      </zone-style>
-                    </zone>
-                    <zone h='7100' id='9' name='Station Map' pane-specification-id='0' param='[textscan.42002.501055717592].[usr:Calculation_371828452929024003:qk]' type-v2='color' w='49528' x='468' y='92068'>
-                      <zone-style>
-                        <format attr='border-color' value='#000000' />
-                        <format attr='border-style' value='none' />
-                        <format attr='border-width' value='0' />
-                        <format attr='margin' value='4' />
-                      </zone-style>
-                    </zone>
+            <zone h='98336' id='11' type-v2='layout-basic' w='99064' x='468' y='832'>
+              <zone h='98336' id='7' param='horz' type-v2='layout-flow' w='99064' x='468' y='832'>
+                <zone h='98336' id='5' type-v2='layout-basic' w='99064' x='468' y='832'>
+                  <zone h='91236' id='3' name='Station Map' w='49528' x='468' y='832'>
+                    <zone-style>
+                      <format attr='border-color' value='#000000' />
+                      <format attr='border-style' value='none' />
+                      <format attr='border-width' value='0' />
+                      <format attr='margin' value='4' />
+                    </zone-style>
+                  </zone>
+                  <zone h='41863' id='10' name='Station Flow' w='49536' x='49996' y='14716'>
+                    <zone-style>
+                      <format attr='border-color' value='#000000' />
+                      <format attr='border-style' value='none' />
+                      <format attr='border-width' value='0' />
+                      <format attr='margin' value='4' />
+                    </zone-style>
+                  </zone>
+                  <zone h='42589' id='15' name='Station Speed' w='49536' x='49996' y='56579'>
+                    <zone-style>
+                      <format attr='border-color' value='#000000' />
+                      <format attr='border-style' value='none' />
+                      <format attr='border-width' value='0' />
+                      <format attr='margin' value='4' />
+                    </zone-style>
+                  </zone>
+                  <zone forceUpdate='true' h='13884' id='16' type-v2='text' w='36704' x='62828' y='832'>
+                    <formatted-text>
+                      <run fontsize='8'>This visualization represents typical weekday summaries of Caltrans PeMS Data (</run>
+                      <run auto-url='true' fontsize='8' hyperlink='tabdoc:load-url url=&amp;quot;https://pems.dot.ca.gov/&amp;quot;'>https://pems.dot.ca.gov/</run>
+                      <run fontsize='8'>).  For transportation planning purposes, a &quot;typical weekday&quot; is defined as a </run>
+                      <run bold='true' fontsize='8'>Tuesday</run>
+                      <run fontsize='8'>, </run>
+                      <run bold='true' fontsize='8'>Wednesday</run>
+                      <run fontsize='8'>, or </run>
+                      <run bold='true' fontsize='8'>Thursday</run>
+                      <run fontsize='8'> in the months of </run>
+                      <run bold='true' fontsize='8'>March</run>
+                      <run fontsize='8'>, </run>
+                      <run bold='true' fontsize='8'>April</run>
+                      <run fontsize='8'>, </run>
+                      <run bold='true' fontsize='8'>May</run>
+                      <run fontsize='8'>, </run>
+                      <run bold='true' fontsize='8'>September</run>
+                      <run fontsize='8'>, </run>
+                      <run bold='true' fontsize='8'>October</run>
+                      <run fontsize='8'> and </run>
+                      <run bold='true' fontsize='8'>November</run>
+                      <run fontsize='8'>, not including holidays.</run>
+                      <run>Æ&#10;&#10;</run>
+                      <run fontsize='8'>Underlying data last updated: </run>
+                      <run bold='true' fontsize='8'>2024-05-13</run>
+                      <run>Æ&#10;</run>
+                      <run fontsize='8'>Data Files: </run>
+                      <run auto-url='true' fontsize='8' hyperlink='tabdoc:load-url url=&amp;quot;https://mtcdrive.box.com/v/pems-typical-weekday&amp;quot;'>https://mtcdrive.box.com/v/pems-typical-weekday</run>
+                      <run>Æ&#10;</run>
+                      <run fontsize='8'>Processing Scripts: </run>
+                      <run auto-url='true' fontsize='8' hyperlink='tabdoc:load-url url=&amp;quot;https://github.com/BayAreaMetro/pems-typical-weekday&amp;quot;'>https://github.com/BayAreaMetro/pems-typical-weekday</run>
+                    </formatted-text>
+                    <zone-style>
+                      <format attr='border-color' value='#000000' />
+                      <format attr='border-style' value='none' />
+                      <format attr='border-width' value='0' />
+                      <format attr='margin' value='4' />
+                    </zone-style>
+                  </zone>
+                  <zone h='13884' id='14' name='Station Flow' pane-specification-id='0' param='[textscan.42002.501055717592].[none:time_period:nk]' type-v2='color' w='12832' x='49996' y='832'>
+                    <zone-style>
+                      <format attr='border-color' value='#000000' />
+                      <format attr='border-style' value='none' />
+                      <format attr='border-width' value='0' />
+                      <format attr='margin' value='4' />
+                    </zone-style>
+                  </zone>
+                  <zone h='7100' id='9' name='Station Map' pane-specification-id='0' param='[textscan.42002.501055717592].[usr:Calculation_371828452929024003:qk]' type-v2='color' w='49528' x='468' y='92068'>
+                    <zone-style>
+                      <format attr='border-color' value='#000000' />
+                      <format attr='border-style' value='none' />
+                      <format attr='border-width' value='0' />
+                      <format attr='margin' value='4' />
+                    </zone-style>
                   </zone>
                 </zone>
               </zone>
@@ -1863,8 +1866,8 @@
         <devicelayout auto-generated='true' name='Phone'>
           <size maxheight='1200' minheight='1200' sizing-mode='vscroll' />
           <zones>
-            <zone h='100000' id='52' type-v2='layout-basic' w='100000' x='0' y='0'>
-              <zone h='98336' id='51' param='vert' type-v2='layout-flow' w='99064' x='468' y='832'>
+            <zone h='100000' id='56' type-v2='layout-basic' w='100000' x='0' y='0'>
+              <zone h='98336' id='55' param='vert' type-v2='layout-flow' w='99064' x='468' y='832'>
                 <zone h='13202' id='47' mode='checkdropdown' name='Station Map' param='[textscan.42002.501055717592].[none:district:ok]' type-v2='filter' values='database' w='6367' x='1286' y='75364'>
                   <zone-style>
                     <format attr='border-color' value='#000000' />
@@ -1901,7 +1904,7 @@
                     <format attr='padding' value='0' />
                   </zone-style>
                 </zone>
-                <zone forceUpdate='true' h='13884' id='16' type-v2='text' w='36703' x='62829' y='832'>
+                <zone forceUpdate='true' h='13884' id='16' type-v2='text' w='36704' x='62828' y='832'>
                   <formatted-text>
                     <run fontsize='8'>This visualization represents typical weekday summaries of Caltrans PeMS Data (</run>
                     <run auto-url='true' fontsize='8' hyperlink='tabdoc:load-url url=&amp;quot;https://pems.dot.ca.gov/&amp;quot;'>https://pems.dot.ca.gov/</run>
@@ -1951,7 +1954,7 @@
                     <format attr='padding' value='0' />
                   </zone-style>
                 </zone>
-                <zone h='13884' id='14' name='Station Flow' pane-specification-id='0' param='[textscan.42002.501055717592].[none:time_period:nk]' type-v2='color' w='12833' x='49996' y='832'>
+                <zone h='13884' id='14' name='Station Flow' pane-specification-id='0' param='[textscan.42002.501055717592].[none:time_period:nk]' type-v2='color' w='12832' x='49996' y='832'>
                   <zone-style>
                     <format attr='border-color' value='#000000' />
                     <format attr='border-style' value='none' />
@@ -2001,7 +2004,7 @@
           <zoom type='entire-view' />
         </viewpoint>
       </viewpoints>
-      <active id='4' />
+      <active id='3' />
       <simple-id uuid='{A4F70E3D-2559-4C1B-B4DF-79A4E7A7FC38}' />
     </window>
     <window class='worksheet' name='Raw Table View'>
@@ -2151,9 +2154,11 @@
             <field>[textscan.42002.501055717592].[none:Calculation_262897638090821633:nk]</field>
             <field>[textscan.42002.501055717592].[none:Calculation_887490610275139591:nk]</field>
             <field>[textscan.42002.501055717592].[none:district:ok]</field>
+            <field>[textscan.42002.501055717592].[none:type:nk]</field>
             <field>[textscan.42002.501055717592].[none:year:qk]</field>
           </color-one-way>
         </highlight>
+        <default-map-tool-selection tool='1' />
       </viewpoint>
       <simple-id uuid='{4EDA928E-F8D2-426C-8AB2-A166343745C9}' />
     </window>
