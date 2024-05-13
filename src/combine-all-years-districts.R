@@ -3,8 +3,8 @@
 #
 # Outputs to a single 
 #   - pems_hour.[RDS,Rdata,csv]
+#   - pems_hour_by_month.[RDS,Rdata,csv]
 #   - pems_period.[RDS,Rdata,csv]
-#   - pems_period_all_months.[RDS,Rdata,csv]
 #   - pems_truck_hour.[RDS,Rdata,csv]
 #   - pems_truck_period.[RDS,Rdata,csv
 
@@ -14,36 +14,32 @@ library(dplyr)
 OUTPUT_DATA_DIR <- "../data"     # hourly and period summaries (by district, year)
 file_list <-  list.files(path=OUTPUT_DATA_DIR)
 
-tibble_list <- list(
-    pems_hour_d         = tibble(),
-    pems_period_d       = tibble(),
-    period_df_all_months_d <- tibble(),
-    pems_truck_hour_    = tibble(),
-    pems_truck_period_  = tibble()
+prefix_list <- c(
+  "pems_hour_d",
+  "pems_hour_by_month_d",
+  "pems_period_d",
+  "pems_truck_hour_",
+  "pems_truck_period_"
 )
 
-for (file_idx in 1:length(file_list)) {
+for(prefix in prefix_list) {
+
+  tibble_for_prefix = tibble()
+  file_list = list.files(path=OUTPUT_DATA_DIR, pattern=prefix)
+
+  for (file_idx in 1:length(file_list)) {
     file_name <- file_list[file_idx]
 
-    for(prefix in names(tibble_list)) {
-      if (startsWith(file_name,prefix)) {
-        this_df <- readRDS(file.path(OUTPUT_DATA_DIR, file_name))
-        tibble_list[[prefix]] <- rbind(tibble_list[[prefix]], this_df)
-        print(sprintf('Read %s; %s has %8d rows', 
-                      file_name, prefix, nrow(tibble_list[[prefix]])))
-        # continue in the loop
-        next
-      }
-    }
-    if (startsWith(file_name,'pems_period_all_months_d')) {
-        this_period_df_all_months <- readRDS(file.path(OUTPUT_DATA_DIR, file_name))
-        period_df_all_months <- rbind(period_df_all_months, this_period_df_all_months)
-        print(sprintf('Read %s; period_df_all_months has %8d rows', file_name, nrow(period_df_all_months)))
-    }
-}
+    this_df <- readRDS(file.path(OUTPUT_DATA_DIR, file_name))
+      
+    # print(colnames(this_df))
+    tibble_for_prefix <- rbind(tibble_for_prefix, this_df)
 
-# these are big -- do not commit!
-for(prefix in names(tibble_list)) {
+    print(sprintf('Read %s with %6d rows; total rows for all years: %8d', 
+                  file_name, nrow(this_df), nrow(tibble_for_prefix)))
+    # continue in the loop
+  }
+
   output_file <- file.path(OUTPUT_DATA_DIR, prefix)
   # drop the '_d'
   if (endsWith(prefix,'_d')) {
@@ -53,17 +49,16 @@ for(prefix in names(tibble_list)) {
      output_file <- substr(output_file, 0, nchar(output_file)-1)
   }
 
-  tibble_to_save <- tibble_list[[prefix]]
-
+  # these are big -- do not commit!
   # Write as Rdata (for tableau)
-  save(tibble_to_save, file=paste0(output_file,".Rdata"))
+  save(tibble_for_prefix, file=paste0(output_file,".Rdata"))
   print(paste('Wrote',paste0(output_file,".Rdata")))
 
   # Write as RDS
-  saveRDS(tibble_to_save, paste0(output_file,".RDS"))
+  saveRDS(tibble_for_prefix, paste0(output_file,".RDS"))
   print(paste('Wrote',paste0(output_file,".RDS")))
 
   # write as CSV
-  write.csv(tibble_to_save, paste0(output_file,".csv"), row.names=FALSE)
+  write.csv(tibble_for_prefix, paste0(output_file,".csv"), row.names=FALSE)
   print(paste('Wrote',paste0(output_file,".csv")))
 }
