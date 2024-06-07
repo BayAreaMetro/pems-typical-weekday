@@ -335,7 +335,8 @@ for (year in argv$year) {
     
     # read meta data
     meta_df <- consume_meta(SOURCE_DATA_DIR, district, year)
-    
+    stopifnot(nrow(filter(meta_df, is.null(Latitude) | is.null(Longitude) | is.null(Abs_PM))) == 0)
+
     typical_months_df <- tibble()
     all_months_df <- tibble()
 
@@ -380,16 +381,21 @@ for (year in argv$year) {
       typical_months_df,
       join_meta_df,
       by = c("station","district","route","direction","type"))
-    
+    stopifnot(nrow(filter(typical_months_df, is.null(latitude) | is.null(longitude) | is.null(abs_pm))) == 0)
+
     all_months_df <- inner_join(
       all_months_df,
       join_meta_df,
       by = c("station","district","route","direction","type"))
+    stopifnot(nrow(filter(all_months_df, is.null(latitude) | is.null(longitude) | is.null(abs_pm))) == 0)
 
     # summaries for typical months -- by hour and by period
     typical_months_df <- remove_suspect(typical_months_df, sprintf("%d_typical", year))
     annual_hourly_sum_df <- sum_for_hours(typical_months_df)
     annual_period_sum_df <- sum_for_periods(typical_months_df)
+
+    stopifnot(nrow(filter(annual_hourly_sum_df, is.null(latitude) | is.null(longitude) | is.null(abs_pm))) == 0)
+    stopifnot(nrow(filter(annual_period_sum_df, is.null(latitude) | is.null(longitude) | is.null(abs_pm))) == 0)
 
     # summary for all months -- by hour & month
     all_months_df <- remove_suspect(all_months_df, sprintf("%d_all", year))
@@ -399,6 +405,9 @@ for (year in argv$year) {
     annual_hourly_sum_df <- relocate(annual_hourly_sum_df, state_pm, abs_pm, latitude, longitude, year, .after = last_col())
     annual_period_sum_df <- relocate(annual_period_sum_df, state_pm, abs_pm, latitude, longitude, year, .after = last_col())
   
+    stopifnot(nrow(filter(annual_hourly_sum_df, is.null(latitude) | is.null(longitude) | is.null(abs_pm))) == 0)
+    stopifnot(nrow(filter(annual_period_sum_df, is.null(latitude) | is.null(longitude) | is.null(abs_pm))) == 0)
+
     # write them
     output_hour_filename          <- file.path(OUTPUT_DATA_DIR, sprintf("pems_hour_d%02d_%d.RDS", district, year))
     output_period_filename        <- file.path(OUTPUT_DATA_DIR, sprintf("pems_period_d%02d_%d.RDS", district, year))
