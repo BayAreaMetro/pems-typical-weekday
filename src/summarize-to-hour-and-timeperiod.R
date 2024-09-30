@@ -1,12 +1,13 @@
 USAGE <- "
- Pass --h for help on usage.
+ Pass -h for help on usage.
 
  Aggregates PeMS downloaded data files into monthly and annual summaries.
  Given a year (or multiple years) and Caltrans district (or multiple districts),
  this script does the following: 
   1) Reads the meta data for the district/year
   2) For all months, reads the station_hour data 
-     from M:/Data/Traffic/PeMS/[year]/d[district]_text_station_hour_[year]_[month].txt
+     from M:/Data/Traffic/PeMS/[year]/d[district]_text_station_hour_[year]_[month].txt or
+          M:/Data/Traffic/PeMS/[year]/original_zipped/d[district]_text_station_hour_[year]_[month].txt.gz
   3) Filters to only rows with pct_obs >= MIN_PCT_OBS
      Filters to only typical weekdays (Tuesday, Wednesay and Thursday),
      Filters out holidays
@@ -91,6 +92,58 @@ HOUR_TO_TIMEPERIOD_DF <-
 TIMEPERIOD_COUNTS_DF <- select(as.data.frame(table(HOUR_TO_TIMEPERIOD_DF$time_period)), 
                              time_period = Var1, 
                              time_period_count = Freq)
+
+HOUR_COLUMN_NAMES <- c(
+  "time_stamp_string",
+  "station",
+  "district",
+  "route",
+  "direction",
+  "type",
+  "length",
+  "samples",
+  "pct_obs",
+  "flow",
+  "occupancy",
+  "speed",
+  "delay_35",
+  "delay_40",
+  "delay_45",
+  "delay_50",
+  "delay_55",
+  "delay_60",
+  "flow_1", "occ_1",  "speed_1",  
+  "flow_2", "occ_2",  "speed_2",
+  "flow_3", "occ_3",  "speed_3",
+  "flow_4", "occ_4",  "speed_4",
+  "flow_5", "occ_5",  "speed_5",
+  "flow_6", "occ_6",  "speed_6",
+  "flow_7", "occ_7",  "speed_7",
+  "flow_8", "occ_8",  "speed_8"
+)
+  
+HOUR_COLUMN_TYPES <- paste0(
+  "c", # time_stamp_string
+  "i", # station
+  "i", # district
+  "i", # route
+  "c", # direction
+  "c", # type
+  "d", # length
+  "i", # samples
+  "i", # pct_obs
+  paste0(replicate(33,"d"),collapse="")
+)
+
+# create named vector with name:class for read.table
+HOUR_COLUMN_CLASSES <- strsplit(HOUR_COLUMN_TYPES,split="")[[1]]
+HOUR_COLUMN_CLASSES <- setNames(HOUR_COLUMN_CLASSES, HOUR_COLUMN_NAMES)
+HOUR_COLUMN_CLASSES <- replace(HOUR_COLUMN_CLASSES, HOUR_COLUMN_CLASSES=="c", "character")
+HOUR_COLUMN_CLASSES <- replace(HOUR_COLUMN_CLASSES, HOUR_COLUMN_CLASSES=="i", "integer")
+HOUR_COLUMN_CLASSES <- replace(HOUR_COLUMN_CLASSES, HOUR_COLUMN_CLASSES=="d", "double")
+print("HOUR_COLUMN_CLASSES")
+print(HOUR_COLUMN_CLASSES)
+
 # Methods ----------------------------------------------------------------------
 
 #' Check for meta data file, read it and return as a dataframe
@@ -110,67 +163,31 @@ consume_meta <- function(data_dir, district, year) {
 #' Read monthly data files (e.g., d[DD]_text_station_hour_[YYYY]_[MM].txt) and
 #' return as a dataframe
 consume_raw <- function(data_dir, district, year, month){
-  
-  HOUR_COLUMN_NAMES <- c("time_stamp_string",
-                         "station",
-                         "district",
-                         "route",
-                         "direction",
-                         "type",
-                         "length",
-                         "samples",
-                         "pct_obs",
-                         "flow",
-                         "occupancy",
-                         "speed",
-                         "delay_35",
-                         "delay_40",
-                         "delay_45",
-                         "delay_50",
-                         "delay_55",
-                         "delay_60",
-                         "flow_1",
-                         "occ_1",
-                         "speed_1",
-                         "flow_2",
-                         "occ_2",
-                         "speed_2",
-                         "flow_3",
-                         "occ_3",
-                         "speed_3",
-                         "flow_4",
-                         "occ_4",
-                         "speed_4",
-                         "flow_5",
-                         "occ_5",
-                         "speed_5",
-                         "flow_6",
-                         "occ_6",
-                         "speed_6",
-                         "flow_7",
-                         "occ_7",
-                         "speed_7",
-                         "flow_8",
-                         "occ_8",
-                         "speed_8")
-  
-  HOUR_COLUMN_TYPES <- paste0("c", # time_stamp_string
-                              "i", # station
-                              "i", # district
-                              "i", # route
-                              "c", # direction
-                              "c", # type
-                              "d", # length
-                              "i", # samples
-                              "i", # pct_obs
-                              rep("d", 33))
-  
+    
   district_string <- sprintf("%02d", district)
   month_string <- sprintf("%02d", month)
   
   filename <- paste0("d", district_string, "_text_station_hour_", year, "_", month_string, ".txt")
-  df <- read_csv(file.path(data_dir, year, filename), col_names = HOUR_COLUMN_NAMES, col_types = HOUR_COLUMN_TYPES)
-  print(paste("Read",nrow(df),"rows from",file.path(data_dir, year, filename)))
+  # try unzipped first
+  if (file.exists(file.path(data_dir, year, filename))) {
+    df <- read_csv(file.path(data_dir, year, filename), col_names = HOUR_COLUMN_NAMES, col_types = HOUR_COLUMN_TYPES)
+    print(paste("Read",nrow(df),"rows from",file.path(data_dir, year, filename)))
+  } else {
+    filename <- paste0(filename, ".gz")
+    # try zipped version second
+    if (file.exists(file.path(data_dir, year, "original_zipped", filename))) {
+      df <- read.table(
+        gzfile(file.path(data_dir, year, "original_zipped", filename)),
+        sep = ",",
+        col.names = HOUR_COLUMN_NAMES, 
+        colClasses = HOUR_COLUMN_CLASSES)
+      print(paste("Read",nrow(df),"rows from",file.path(data_dir, year, "original_zipped", filename)))
+    }
+    else {
+      print(paste("Didn't find data for district:",district_string,", year:",year,", month:", month_string))
+      return(data.frame())
+    }
+  }
   # print(problems(df))
   return(df)
 }
@@ -346,6 +363,8 @@ for (year in argv$year) {
 
         # print(paste("Consuming Year", year, "Month", month, "for District", district))
         raw_df <- consume_raw(SOURCE_DATA_DIR, district, year, month)
+        # if no data found, continue
+        if (nrow(raw_df) == 0) { next }
         clean_df <- clean_raw(raw_df)
 
         # keep all months
