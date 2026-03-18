@@ -217,7 +217,8 @@ clean_raw <- function(input_df){
     mutate(lanes = ifelse(is.na(flow_3), 2, lanes)) %>%
     mutate(lanes = ifelse(is.na(flow_2), 1, lanes)) %>%
     select(date, month, day_of_week, station, district, route, direction, type, hour, 
-           pct_obs, length, flow, speed, lanes, occupancy)
+           pct_obs, length, flow, speed, lanes, occupancy, 
+           flow_1, flow_2, flow_3, flow_4, flow_5, flow_6, flow_7, flow_8)
   return(df)
 }
 
@@ -240,6 +241,30 @@ remove_suspect <- function(input_df, suffix){
               median_occup = median(occupancy),
               avg_occup    = mean(occupancy), 
               sd_occupancy = sd(occupancy),
+              median_flow_1 = median(flow_1),
+              avg_flow_1   = mean(flow_1),
+              sd_flow_1    = sd(flow_1),
+              median_flow_2 = median(flow_2),
+              avg_flow_2   = mean(flow_2),
+              sd_flow_2      = sd(flow_2),
+              median_flow_3 = median(flow_3),
+              avg_flow_3   = mean(flow_3),
+              sd_flow_3      = sd(flow_3),
+              median_flow_4 = median(flow_4),
+              avg_flow_4   = mean(flow_4),
+              sd_flow_4      = sd(flow_4),
+              median_flow_5 = median(flow_5),
+              avg_flow_5   = mean(flow_5),
+              sd_flow_5      = sd(flow_5),
+              median_flow_6 = median(flow_6),
+              avg_flow_6   = mean(flow_6),
+              sd_flow_6    = sd(flow_6),
+              median_flow_7 = median(flow_7),
+              avg_flow_7   = mean(flow_7),
+              sd_flow_7    = sd(flow_7),
+              median_flow_8 = median(flow_8),
+              avg_flow_8   = mean(flow_8),
+              sd_flow_8      = sd(flow_8),
               .groups      = "drop")
   
   suspect_stations_df <- sum_hour_df %>%
@@ -279,6 +304,30 @@ sum_for_hours <- function(input_df) {
               avg_occup     = mean(occupancy),
               sd_occupancy  = sd(occupancy),
               days_observed = n(),
+              median_flow_1 = median(flow_1),
+              avg_flow_1   = mean(flow_1),
+              sd_flow_1    = sd(flow_1),
+              median_flow_2 = median(flow_2),
+              avg_flow_2   = mean(flow_2),
+              sd_flow_2      = sd(flow_2),
+              median_flow_3 = median(flow_3),
+              avg_flow_3   = mean(flow_3),
+              sd_flow_3      = sd(flow_3),
+              median_flow_4 = median(flow_4),
+              avg_flow_4   = mean(flow_4),
+              sd_flow_4      = sd(flow_4),
+              median_flow_5 = median(flow_5),
+              avg_flow_5   = mean(flow_5),
+              sd_flow_5      = sd(flow_5),
+              median_flow_6 = median(flow_6),
+              avg_flow_6   = mean(flow_6),
+              sd_flow_6    = sd(flow_6),
+              median_flow_7 = median(flow_7),
+              avg_flow_7   = mean(flow_7),
+              sd_flow_7    = sd(flow_7),
+              median_flow_8 = median(flow_8),
+              avg_flow_8   = mean(flow_8),
+              sd_flow_8      = sd(flow_8),
               .groups = "drop") %>%
     filter(days_observed > MIN_DAYS_OBSERVED)
   return(df)
@@ -299,6 +348,14 @@ sum_for_periods <- function(input_df) {
               speed_flow = sum(speed_flow), 
               occup_flow = sum(occup_flow), 
               hours_observed = n(),
+              flow_1 = sum(flow_1),
+              flow_2 = sum(flow_2),
+              flow_3 = sum(flow_3),
+              flow_4 = sum(flow_4),
+              flow_5 = sum(flow_5),
+              flow_6 = sum(flow_6),
+              flow_7 = sum(flow_7),
+              flow_8 = sum(flow_8),
               .groups = "drop") %>%
     left_join(., TIMEPERIOD_COUNTS_DF, by = c("time_period")) %>%
     filter(hours_observed == time_period_count) %>%
@@ -316,6 +373,30 @@ sum_for_periods <- function(input_df) {
               avg_occup = mean(occupancy), 
               sd_occupancy = sd(occupancy),
               days_observed = n(),
+              median_flow_1 = median(flow_1),
+              avg_flow_1   = mean(flow_1),
+              sd_flow_1    = sd(flow_1),
+              median_flow_2 = median(flow_2),
+              avg_flow_2   = mean(flow_2),
+              sd_flow_2      = sd(flow_2),
+              median_flow_3 = median(flow_3),
+              avg_flow_3   = mean(flow_3),
+              sd_flow_3      = sd(flow_3),
+              median_flow_4 = median(flow_4),
+              avg_flow_4   = mean(flow_4),
+              sd_flow_4      = sd(flow_4),
+              median_flow_5 = median(flow_5),
+              avg_flow_5   = mean(flow_5),
+              sd_flow_5      = sd(flow_5),
+              median_flow_6 = median(flow_6),
+              avg_flow_6   = mean(flow_6),
+              sd_flow_6    = sd(flow_6),
+              median_flow_7 = median(flow_7),
+              avg_flow_7   = mean(flow_7),
+              sd_flow_7    = sd(flow_7),
+              median_flow_8 = median(flow_8),
+              avg_flow_8   = mean(flow_8),
+              sd_flow_8      = sd(flow_8),
               .groups = "drop") %>%
     filter(days_observed > MIN_DAYS_OBSERVED)
   
@@ -339,7 +420,30 @@ sum_for_hours_by_month <- function(input_df) {
               median_occup  = median(occupancy), 
               avg_occup     = mean(occupancy), 
               sd_occupancy  = sd(occupancy),
-              days_observed = n(),
+              days_observed = n(),median_flow_1 = median(flow_1),
+              avg_flow_1   = mean(flow_1),
+              sd_flow_1    = sd(flow_1),
+              median_flow_2 = median(flow_2),
+              avg_flow_2   = mean(flow_2),
+              sd_flow_2      = sd(flow_2),
+              median_flow_3 = median(flow_3),
+              avg_flow_3   = mean(flow_3),
+              sd_flow_3      = sd(flow_3),
+              median_flow_4 = median(flow_4),
+              avg_flow_4   = mean(flow_4),
+              sd_flow_4      = sd(flow_4),
+              median_flow_5 = median(flow_5),
+              avg_flow_5   = mean(flow_5),
+              sd_flow_5      = sd(flow_5),
+              median_flow_6 = median(flow_6),
+              avg_flow_6   = mean(flow_6),
+              sd_flow_6    = sd(flow_6),
+              median_flow_7 = median(flow_7),
+              avg_flow_7   = mean(flow_7),
+              sd_flow_7    = sd(flow_7),
+              median_flow_8 = median(flow_8),
+              avg_flow_8   = mean(flow_8),
+              sd_flow_8      = sd(flow_8),
               .groups = "drop") %>%
     filter(days_observed > MIN_DAYS_OBSERVED_ONE_MONTH)
   return(df)
@@ -410,7 +514,10 @@ for (year in argv$year) {
 
     # summaries for typical months -- by hour and by period
     typical_months_df <- remove_suspect(typical_months_df, sprintf("%d_typical", year))
+    
+    print(head(typical_months_df, 10))
     annual_hourly_sum_df <- sum_for_hours(typical_months_df)
+    
     annual_period_sum_df <- sum_for_periods(typical_months_df)
 
     stopifnot(nrow(filter(annual_hourly_sum_df, is.null(latitude) | is.null(longitude) | is.null(abs_pm))) == 0)
